@@ -1,0 +1,59 @@
+Bicicleteria system
+Reglas de negocio
+
+INVENTARIO
+Administra todos los ítems (ruedas, frenos, cadenas, cuadros, etc.) que la bicicletería posee, ensambla o recibe de proveedores.
+
+Si el nombre o tipo están vacíos el sistema rechaza el registro.
+Si el precioVenta < precioCompra mostrar advertencia (perdida potencial)
+Si se recibe un nuevo lote del mismo producto incrementar stock.
+Si un ítem se da de baja (dañado o vendido) disminuir stock.
+El stock nunca puede quedar por debajo de cero.
+Si el stock baja de un umbral mínimo (por ejemplo 5 unidades) generar alerta de reposición.
+Se debe poder buscar por:
+nombre y marca
+Solo se puede eliminar un ítem si no tiene registros asociados en ventas o reparaciones.
+Si un item llega en mal estado descontarlo del stock.
+
+
+MECANICO
+* validación de entrada
+El servicio debe tener cliente y bicicleta asociados
+El tipo de servicio debe ser valido (solo Reparación o chaqueo)
+El costo de mano de obra debe ser coherente:
+reparación mínimo 2000
+chequeo mínimo 1000
+
+* según tipo de servicio
+Reparación:
+Debe incluir al menos una pieza usada o una descripción del problema.
+Si se registran piezas:
+Validar que existan en el inventario.
+Descontarlas automáticamente del stock
+
+Chequeo:
+No requiere piezas, pero sí una descripción de revisión o diagnóstico.
+
+* Reglas de estado
+PENDIENTE = se crea el registro.
+EN_PROCESO = el mecanico comienza el trabajo.
+COMPLETADO = el mecanico marca el trabajo como terminado.
+ENTREGADO = el cliente retira le bicicleta y paga.
+No se puede marcar como COMPLETADO si no hay descripción de trabajo.
+No se puede marcar como ENTREGADO si no está COMPLETADO.
+Al marcar como ENTREGADO, registrar fecha de entrega real.
+
+*Reglas contables / inventario
+Si se usan piezas descontarlas del inventario.
+Si el cliente deja la bici sin pagar crear cuenta pendiente.
+
+PUNTO DE VENTAS
+Gestiona las ventas a clientes: qué se vendió, cuánto costó y cómo se pagó.
+
+Si un ítem tiene cantidadEnStock < cantidadVendida, la venta se rechaza.
+Después de confirmar la venta disminuir stock de los ítems vendidos.
+Cada venta genera un comprobante con número único.
+Guardar el registro contable para reportes mensuales.
+Solo se permiten devoluciones dentro de X días (por ejemplo, 7).
+Al devolver, el stock se reintegra.
+Margen de ganancia = precioVenta - precioCompra.
