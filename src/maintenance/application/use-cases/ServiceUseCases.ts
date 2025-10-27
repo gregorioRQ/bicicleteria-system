@@ -60,4 +60,18 @@ export class ServiceUseCases{
 
         await this.serviceRepo.updateEstado(id, nuevoEstado);
     }
+
+    async eliminarServicio(id: number): Promise<void>{
+        const servicio = await this.serviceRepo.findById(id);
+        if(!servicio) throw new Error("El servicio no existe o ya fue eliminado.");
+        await this.serviceRepo.delete(id);
+    }
+
+    async listarServicios(): Promise<Service[]>{
+        return this.serviceRepo.findAll();
+    }
+
+    async obtenerServicioPorId(id: number): Promise<Service | null>{
+        return this.serviceRepo.findById(id);
+    }
 }

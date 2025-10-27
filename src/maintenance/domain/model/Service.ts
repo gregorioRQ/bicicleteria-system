@@ -12,6 +12,7 @@ export enum Estado{
 
 export class Service {
     constructor(
+        public id: number | undefined,
         public tipo_servicio: TipoServicio,
         public descripcion: string,
         public num_cliente: bigint,
