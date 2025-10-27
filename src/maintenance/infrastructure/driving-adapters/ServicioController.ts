@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type { ServiceUseCases } from "../../application/use-cases/ServiceUseCases";
-import { Service } from "../../domain/model/Service";
+import type { ServiceUseCases } from "../../application/use-cases/ServiceUseCases.js";
+import { Service } from "../../domain/model/Service.js";
 
 
 export class ServiceController{

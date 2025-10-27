@@ -1,4 +1,4 @@
-import { Service } from "../model/Service";
+import { Service } from "../model/Service.js";
 
 export interface ServiceRepositoryOutPort{
     findAll(): Promise<Service[]>;

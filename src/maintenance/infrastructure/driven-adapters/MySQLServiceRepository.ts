@@ -1,6 +1,6 @@
-import { pool } from "../../../inventory/infrastructure/driven-adapters/db";
-import type { Service } from "../../domain/model/Service";
-import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort";
+import { pool } from "../../../inventory/infrastructure/driven-adapters/db.js";
+import type { Service } from "../../domain/model/Service.js";
+import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort.js";
 
 
 export class MySQLServiceRepository implements ServiceRepositoryOutPort{

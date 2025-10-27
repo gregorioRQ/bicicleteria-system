@@ -1,6 +1,6 @@
-import { TipoServicio, Estado, type Service } from "../../domain/model/Service";
-import type { ItemCommand } from "../../domain/ports/ItemCommand";
-import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort";
+import { TipoServicio, Estado, type Service } from "../../domain/model/Service.js";
+import type { ItemCommand } from "../../domain/ports/ItemCommand.js";
+import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort.js";
 
 export class ServiceUseCases{
     constructor(
