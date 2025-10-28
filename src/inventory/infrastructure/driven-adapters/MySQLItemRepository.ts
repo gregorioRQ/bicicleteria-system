@@ -1,6 +1,6 @@
-import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort.js";
-import { Item } from "../../domain/model/Item.js";
-import { pool } from "./db.js"; 
+import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort";
+import { Item } from "../../domain/model/Item";
+import { pool } from "../../../db"; 
 
 /**
  * Adaptador de Salida: 

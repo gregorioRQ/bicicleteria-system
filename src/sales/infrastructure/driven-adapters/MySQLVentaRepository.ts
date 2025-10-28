@@ -1,6 +1,6 @@
-import { pool } from "../../../inventory/infrastructure/driven-adapters/db.js";
-import type { Venta } from "../../domain/model/Venta.js";
-import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepositoryOutPort.js";
+import { pool } from "../../../db";
+import type { Venta } from "../../domain/model/Venta";
+import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepositoryOutPort";
 
 
 export class MySQLVentaRepository implements VentaRepositoryOutPort{

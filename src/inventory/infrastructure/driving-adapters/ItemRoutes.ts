@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { ItemController } from "./ItemController.js";
-import { MySQLItemRepository } from "../driven-adapters/MySQLItemRepository.js";
-import { IItemUseCase } from "../../application/use-cases/ItemUseCase.js";
+import { ItemController } from "./ItemController";
+import { MySQLItemRepository } from "../driven-adapters/MySQLItemRepository";
+import { IItemUseCase } from "../../application/use-cases/ItemUseCase";
 
 const router = Router();
 // instanciar el adaptador de base de datos

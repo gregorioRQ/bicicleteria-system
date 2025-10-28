@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-import itemRoutes from "./inventory/infrastructure/driving-adapters/ItemRoutes.js";
-import serviceRoutes from "./maintenance/infrastructure/driving-adapters/ServiceRoutes.js";
+import itemRoutes from "./inventory/infrastructure/driving-adapters/ItemRoutes";
+import serviceRoutes from "./maintenance/infrastructure/driving-adapters/ServiceRoutes";
+import salesRoutes from "./sales/infrastructure/driving-adapters/SalesRoutes";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Rutas
 app.use("/api/items", itemRoutes);
-app.use("/api/service", serviceRoutes);
+app.use("/api/maintenance", serviceRoutes);
+app.use("/api/sales", salesRoutes);
 
 export default app;

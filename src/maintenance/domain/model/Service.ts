@@ -23,6 +23,6 @@ export class Service {
         public fecha_ingreso: Date = new Date(),
         public estado : Estado,
         public mecanico_id: bigint,
-        public fecha_entrega: Date
+        public fecha_entrega: Date | undefined
     ) {}
 }

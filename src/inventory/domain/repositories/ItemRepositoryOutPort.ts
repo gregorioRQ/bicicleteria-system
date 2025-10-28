@@ -1,4 +1,4 @@
-import { Item } from "../model/Item.js";
+import { Item } from "../model/Item";
 
 /**
  * Puerto de salida: Define las operaciones de persistencia

@@ -1,6 +1,6 @@
-import { TipoServicio, Estado, type Service } from "../../domain/model/Service.js";
-import type { ItemCommand } from "../../domain/ports/ItemCommand.js";
-import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort.js";
+import { TipoServicio, Estado, type Service } from "../../domain/model/Service";
+import type { ItemCommand } from "../../domain/ports/ItemCommand";
+import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort";
 
 export class ServiceUseCases{
     constructor(
@@ -9,7 +9,7 @@ export class ServiceUseCases{
     ){};
 
     async registrarServicio(s: Service): Promise<void> {
-            if (!s.num_bicicleta.trim()) {
+            if (!s.num_bicicleta.trim) {
                 throw new Error("El cliente debe tener una bicicleta asociada");
             }
     
@@ -29,8 +29,8 @@ export class ServiceUseCases{
                 throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
             }
             //items a descontar del stock para la reparacion
-            this.itemCommand.descontarStock(2, 4);
-            s.estado = Estado.PENDIENTE;
+            //this.itemCommand.descontarStock(2, 4);
+            //s.estado = Estado.PENDIENTE;
             this.serviceRepo.save(s);
         }
 

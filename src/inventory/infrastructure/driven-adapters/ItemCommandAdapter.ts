@@ -1,5 +1,5 @@
-import type { ItemCommand } from "../../../maintenance/domain/ports/ItemCommand.js";
-import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort.js";
+import type { ItemCommand } from "../../../maintenance/domain/ports/ItemCommand";
+import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort";
 
 
 export class ItemCommanAdapter implements ItemCommand{

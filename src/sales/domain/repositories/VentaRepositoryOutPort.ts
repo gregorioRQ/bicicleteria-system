@@ -1,4 +1,4 @@
-import { Venta } from "../../domain/model/Venta.js";
+import { Venta } from "../../domain/model/Venta";
 
 export interface VentaRepositoryOutPort{
     findAll(): Promise<Venta[]>

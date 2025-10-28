@@ -13,6 +13,9 @@ const itemCommandAdapter = new ItemCommanAdapter(itemRepository);
 const serviceUseCases = new ServiceUseCases(serviceRepository, itemCommandAdapter);
 const controller = new ServiceController(serviceUseCases);
 
+router.all("/", controller.getAll.bind(controller))
 router.post("/crear", controller.create.bind(controller));
+router.get("/:id", controller.getById.bind(controller));
+router.delete("/id", controller.delete.bind(controller))
 
 export default router;

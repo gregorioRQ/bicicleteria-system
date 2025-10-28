@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import app from "./app.js"; // Importa la configuración de la aplicación desde app.ts
+import app from "./app"; // Importa la configuración de la aplicación desde app.ts
 
 dotenv.config();
 

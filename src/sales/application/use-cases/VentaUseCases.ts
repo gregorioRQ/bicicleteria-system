@@ -1,5 +1,5 @@
-import type { Venta } from "../../domain/model/Venta.js";
-import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepositoryOutPort.js";
+import type { Venta } from "../../domain/model/Venta";
+import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepositoryOutPort";
 
 
 export class VentaUseCases{

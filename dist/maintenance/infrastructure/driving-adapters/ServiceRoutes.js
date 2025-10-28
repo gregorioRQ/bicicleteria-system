@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const MySQLServiceRepository_1 = require("../driven-adapters/MySQLServiceRepository");
+const ServiceUseCases_1 = require("../../application/use-cases/ServiceUseCases");
+const MySQLitemRepository_1 = require("../../../inventory/infrastructure/driven-adapters/MySQLitemRepository");
+const ItemCommandAdapter_1 = require("../../../inventory/infrastructure/driven-adapters/ItemCommandAdapter");
+const ServicioController_1 = require("./ServicioController");
+const router = (0, express_1.Router)();
+const serviceRepository = new MySQLServiceRepository_1.MySQLServiceRepository();
+const itemRepository = new MySQLitemRepository_1.MySQLItemRepository();
+const itemCommandAdapter = new ItemCommandAdapter_1.ItemCommanAdapter(itemRepository);
+const serviceUseCases = new ServiceUseCases_1.ServiceUseCases(serviceRepository, itemCommandAdapter);
+const controller = new ServicioController_1.ServiceController(serviceUseCases);
+router.post("/crear", controller.create.bind(controller));
+exports.default = router;

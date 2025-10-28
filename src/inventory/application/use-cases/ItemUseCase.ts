@@ -1,5 +1,5 @@
-import { Item } from "../../domain/model/Item.js";
-import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort.js";
+import { Item } from "../../domain/model/Item";
+import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort";
 
 /**
  * Puerto de entrada: Define los casos de uso para gestionar productos

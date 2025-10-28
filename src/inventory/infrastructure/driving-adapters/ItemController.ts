@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type { IItemUseCase } from "../../application/use-cases/ItemUseCase.js";
-import { Item } from "../../domain/model/Item.js";
+import type { IItemUseCase } from "../../application/use-cases/ItemUseCase";
+import { Item } from "../../domain/model/Item";
 
 /**
  * Adaptador de Entrada: Controlador rest.
