@@ -11,12 +11,15 @@ export enum Tipo {
 
 export class Venta {
     constructor(
-        public fecha: Date,
+        public id: bigint | undefined,
+        public fecha: Date = new Date(),
         public total: number,
         public metodo_pago: MetodoPago,
-        public tipo: Tipo,
-        public cliente_id: bigint,
+        public tipo_venta: Tipo,
         public empleado_id: bigint,
-        public servicio_id: bigint
+        public servicio_id: bigint,
+        public cliente_nombre: string,
+        public cliente_telefono: string,
+        public cliente_dni: string,
     ) {};
 }

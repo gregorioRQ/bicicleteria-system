@@ -4,6 +4,9 @@ import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepo
 
 
 export class MySQLVentaRepository implements VentaRepositoryOutPort{
+    update(id: number, venta: Venta): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     findAll(): Promise<Venta[]> {
         throw new Error("Method not implemented.");
     }
@@ -12,8 +15,8 @@ export class MySQLVentaRepository implements VentaRepositoryOutPort{
     }
     async save(venta: Venta): Promise<void> {
        await pool.query(
-        "INSERT INTO ventas (fecha, total, metodo_pago, tipo, cliente_id, empleado_id, servicio_id) VALUES (?, ?, ?, ?, ?, ?, ?);", [
-            venta.fecha, venta.total, venta.metodo_pago, venta.tipo, venta.cliente_id, venta.empleado_id, venta.servicio_id
+        "INSERT INTO ventas (fecha, total, metodo_pago, tipo_venta, empleado_id, servicio_id, cliente_nombre, cliente_telefono, cliente_dni) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", [
+            venta.fecha, venta.total, venta.metodo_pago, venta.tipo_venta, venta.empleado_id, venta.servicio_id, venta.cliente_nombre, venta.cliente_telefono, venta.cliente_dni
         ]
        )
     }

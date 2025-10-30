@@ -5,4 +5,5 @@ export interface VentaRepositoryOutPort{
     findById(id: number): Promise<Venta | null>;
     save(venta: Venta): Promise<void>;
     delete(id: number): Promise<boolean>; 
+    update(id: number, venta: Venta): Promise<boolean>;
 }

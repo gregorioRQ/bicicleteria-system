@@ -1,17 +1,28 @@
 import { Router } from "express";
-import { MySQLClienteRepository } from "../driven-adapters/MySQLClienteRepository";
-import { ClienteUseCases } from "../../application/use-cases/ClienteUseCases";
-import { ClienteController } from "./ClienteController";
+
+import { EmpleadoUseCases } from "../../application/use-cases/EmpleadoUseCases";
+import { EmpleadoController } from "../driving-adapters/EmpleadoController";
 import { validateSchema } from "./validation/validationMiddleware";
-import { crearClienteSchema } from "./validation/schemas/cliente.schema";
+import { crearEmpleadoSchema } from "./validation/schemas/empleado.schema";
+import { crearVentaSchema } from "./validation/schemas/venta.schema";
+import { VentaUseCases } from "../../application/use-cases/VentaUseCases";
+import { MySQLVentaRepository } from "../driven-adapters/MySQLVentaRepository";
+import { VentaController } from "./VentaController";
+import { MySQLEmpleadoRepository } from "../driven-adapters/MySQLEmpleadoRepository";
 
 
 const router = Router();
-const clienteRepository = new MySQLClienteRepository();
-const clienteUseCases = new ClienteUseCases(clienteRepository);
-const controller = new ClienteController(clienteUseCases);
+const empleadoRepository = new MySQLEmpleadoRepository();
+const empleadoUseCases = new EmpleadoUseCases(empleadoRepository);
+const controller = new EmpleadoController(empleadoUseCases);
 
-router.post("/crear", validateSchema(crearClienteSchema), controller.crearCliente.bind(controller));
+const ventaRepository = new MySQLVentaRepository();
+const ventaUseCases = new VentaUseCases(ventaRepository, empleadoRepository);
+const ventaController = new VentaController(ventaUseCases);
+
+router.post("/crear", validateSchema(crearVentaSchema), ventaController.crearVenta.bind(ventaController));
+
+router.post("/empleados/crear", validateSchema(crearEmpleadoSchema), controller.crearEmpleado.bind(controller));
 
 
 export default router;
