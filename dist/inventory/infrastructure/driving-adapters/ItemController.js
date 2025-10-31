@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemController = void 0;
-const Item_js_1 = require("../../domain/model/Item.js");
+const Item_1 = require("../../domain/model/Item");
 /**
  * Adaptador de Entrada: Controlador rest.
  * Usa el puerto de entrada (interfaz ItemUseCase), no el repositorio directo.
@@ -66,7 +66,7 @@ class ItemController {
             if (Number.isNaN(precioC) || Number.isNaN(precioV) || Number.isNaN(stk)) {
                 return res.status(400).json({ message: "precioCompra, precioVenta y stock deben ser números" });
             }
-            const newItem = new Item_js_1.Item(0, nombre, marca, precioC, precioV, stk, fecha);
+            const newItem = new Item_1.Item(0, nombre, marca, precioC, precioV, stk, fecha);
             await this.itemUseCase.crearItem(newItem);
             res.status(201).json({ message: "Ítem creado correctamente" });
         }

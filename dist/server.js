@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
-const app_js_1 = __importDefault(require("./app.js")); // Importa la configuración de la aplicación desde app.ts
+const app_1 = __importDefault(require("./app")); // Importa la configuración de la aplicación desde app.ts
 dotenv_1.default.config();
 const PORT = process.env.PORT || 3000;
-app_js_1.default.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
+app_1.default.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));

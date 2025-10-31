@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { MySQLServiceRepository } from "../driven-adapters/MySQLServiceRepository";
 import { ServiceUseCases } from "../../application/use-cases/ServiceUseCases";
-import { MySQLItemRepository } from "../../../inventory/infrastructure/driven-adapters/MySQLitemRepository";
+import { MySQLItemRepository } from "../../../inventory/infrastructure/driven-adapters/MySQLItemRepository";
 import { ItemCommanAdapter } from "../../../inventory/infrastructure/driven-adapters/ItemCommandAdapter";
 import { ServiceController } from "./ServicioController";
 

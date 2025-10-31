@@ -13,14 +13,17 @@ var Tipo;
     Tipo["PRODUCTO"] = "PRODUCTO";
 })(Tipo || (exports.Tipo = Tipo = {}));
 class Venta {
-    constructor(fecha, total, metodo_pago, tipo, cliente_id, empleado_id, servicio_id) {
+    constructor(id, fecha = new Date(), total, metodo_pago, tipo_venta, empleado_id, servicio_id, cliente_nombre, cliente_telefono, cliente_dni) {
+        this.id = id;
         this.fecha = fecha;
         this.total = total;
         this.metodo_pago = metodo_pago;
-        this.tipo = tipo;
-        this.cliente_id = cliente_id;
+        this.tipo_venta = tipo_venta;
         this.empleado_id = empleado_id;
         this.servicio_id = servicio_id;
+        this.cliente_nombre = cliente_nombre;
+        this.cliente_telefono = cliente_telefono;
+        this.cliente_dni = cliente_dni;
     }
     ;
 }

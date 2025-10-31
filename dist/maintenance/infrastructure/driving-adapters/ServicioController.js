@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceController = void 0;
-const Service_js_1 = require("../../domain/model/Service.js");
+const Service_1 = require("../../domain/model/Service");
 class ServiceController {
     constructor(serviceUseCases) {
         this.serviceUseCases = serviceUseCases;
     }
     async create(req, res) {
         try {
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return res.status(400).json({ message: "Cuerpo de la solicitud vacío" });
+            }
             const { mecanico_id, tipo_servicio, descripcion, num_cliente, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega } = req.body;
-            const newService = new Service_js_1.Service(undefined, tipo_servicio, descripcion, num_cliente, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, mecanico_id, fecha_entrega);
+            const newService = new Service_1.Service(undefined, tipo_servicio, descripcion, num_cliente, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, mecanico_id, undefined);
             await this.serviceUseCases.registrarServicio(newService);
             res.status(201).json({ message: "Servicio creado" });
         }
