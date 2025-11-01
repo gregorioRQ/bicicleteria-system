@@ -3,14 +3,21 @@ import { Empleado } from "../../domain/model/Empleado";
 import { EmpleadoRepositoryOutPort } from "../../domain/repositories/EmpleadoRepositoryOutPort";
 
 export class MySQLEmpleadoRepository implements EmpleadoRepositoryOutPort {
-    findByDni(dni: string): Promise<Empleado | null> {
-        throw new Error("Method not implemented.");
+    async findByDni(dni: string): Promise<Empleado | null> {
+        const [rows]: any = await pool.query("SELECT * FROM empleados WHERE dni = ? LIMIT 1", [dni]);
+        if (!rows || rows.length === 0) return null;
+        const r = rows[0];
+        return new Empleado(r.id, r.nombre, r.dni, r.rol, r.telefono);
     }
-    findAll(): Promise<Empleado[]> {
-        throw new Error("Method not implemented.");
+    async findAll(): Promise<Empleado[]> {
+        const [rows]: any = await pool.query("SELECT * FROM empleados");
+        return rows.map((r: any) => new Empleado(r.id, r.nombre, r.dni, r.rol, r.telefono));
     }
-    findById(id: number): Promise<Empleado | null> {
-        throw new Error("Method not implemented.");
+    async findById(id: number): Promise<Empleado | null> {
+        const [rows]: any = await pool.query("SELECT * FROM empleados WHERE id = ? LIMIT 1", [id]);
+        if (!rows || rows.length === 0) return null;
+        const r = rows[0];
+        return new Empleado(r.id, r.nombre, r.dni, r.rol, r.telefono);
     }
     async save(empleado: Empleado): Promise<void> {
         await pool.query(
@@ -19,8 +26,9 @@ export class MySQLEmpleadoRepository implements EmpleadoRepositoryOutPort {
             ]
         )
     }
-    delete(id: number): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async delete(id: number): Promise<boolean> {
+        const [result]: any = await pool.query("DELETE FROM empleados WHERE id = ?", [id]);
+        return result.affectedRows > 0;
     }
-    // Implementación del repositorio utilizando MySQL
+    
 }

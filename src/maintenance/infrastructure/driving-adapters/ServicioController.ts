@@ -12,15 +12,16 @@ export class ServiceController{
                 return res.status(400).json({message: "Cuerpo de la solicitud vacío"});
             }
 
-            const {mecanico_id, tipo_servicio, descripcion, num_cliente, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega
+            const {empleado_id, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega
             } = req.body;
 
-            const newService = new Service(undefined, tipo_servicio, descripcion, num_cliente, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, mecanico_id, undefined);
+            const newService = new Service(undefined, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined);
             await this.serviceUseCases.registrarServicio(newService);
             res.status(201).json({message: "Servicio creado"});
         }catch(error){
             console.error(error);
-            res.status(500).json({message: "Error al crear el servicio"})
+            res.status(500).json({message: "Error al crear el servicio"});
+        
         }
 
     }

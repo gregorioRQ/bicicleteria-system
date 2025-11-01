@@ -10,6 +10,7 @@ export class EmpleadoUseCases{
         if(!empleado){
             throw new Error("Datos del empleado requeridos.")
         }
+        
         const empleadoExistente = await this.empleadoRepository.findByDni(empleado.dni);
 
         if(empleadoExistente?.dni === empleado.dni){
@@ -18,6 +19,7 @@ export class EmpleadoUseCases{
         if(empleadoExistente?.telefono === empleado.telefono){
             throw new Error("El teléfono ya está registrado.");
         }
+        console.log("Empleado a crear:", empleado);
         await this.empleadoRepository.save(empleado);
     }
 

@@ -9,7 +9,7 @@ export class EmpleadoController{
         try{
             const { nombre, dni, telefono, rol } = req.body;
         const nuevoEmpleado = new Empleado(undefined, nombre, dni, rol, telefono);
-
+        
         await this.empleadoUseCase.crearEmpleado(nuevoEmpleado);
         return res.status(201).json({message: "Empleado creado exitosamente"});
         }catch(error){
