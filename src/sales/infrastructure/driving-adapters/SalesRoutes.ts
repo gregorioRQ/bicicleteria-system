@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { EmpleadoUseCases } from "../../application/use-cases/EmpleadoUseCases";
 import { EmpleadoController } from "../driving-adapters/EmpleadoController";
-import { validateSchema } from "./validation/validationMiddleware";
+import { validateSchema } from "../../../shared/validationMiddleware";
 import { crearEmpleadoSchema } from "./validation/schemas/empleado.schema";
 import { crearVentaSchema } from "./validation/schemas/venta.schema";
 import { VentaUseCases } from "../../application/use-cases/VentaUseCases";

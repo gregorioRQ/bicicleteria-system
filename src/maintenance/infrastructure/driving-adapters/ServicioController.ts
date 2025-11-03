@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { ServiceUseCases } from "../../application/use-cases/ServiceUseCases";
 import { Service } from "../../domain/model/Service";
+import { RequestService } from "../../domain/model/RequestService";
 
 
 export class ServiceController{
@@ -12,10 +13,10 @@ export class ServiceController{
                 return res.status(400).json({message: "Cuerpo de la solicitud vacío"});
             }
 
-            const {empleado_id, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega
+            const {empleado_id, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega, items_reparacion
             } = req.body;
 
-            const newService = new Service(undefined, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined);
+            const newService = new RequestService(tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined, items_reparacion);
             await this.serviceUseCases.registrarServicio(newService);
             res.status(201).json({message: "Servicio creado"});
         }catch(error){

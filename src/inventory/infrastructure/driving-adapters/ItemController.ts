@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { IItemUseCase } from "../../application/use-cases/ItemUseCase";
 import { Item } from "../../domain/model/Item";
+import { start } from "repl";
 
 /**
  * Adaptador de Entrada: Controlador rest.
@@ -101,4 +102,38 @@ export class ItemController {
       res.status(500).json({ message: "Error al eliminar el ítem" });
     }
   }
+
+  async updateStock(req: Request, res: Response){
+    try{
+
+      if(!req.body){
+        return res.status(400).json({message: "Cuerpo de la solicitud es requerido"});
+      }
+      const { id, cantidad } = req.body;
+
+      await this.itemUseCase.actualizarStock(id, cantidad);
+      res.status(200).json({ message: "Stock actualizado correctamente" });
+    }catch(err){
+      console.error(err);
+      res.status(500).json({message: "Ocurrió un error al actualizar el ítem"});
+      throw err;
+    }
+  }
+
+  async decrementStock(req: Request, res: Response){
+    try{
+
+      if(!req.body){
+        return res.status(400).json({message: "Cuerpo de la solicitud es requerido"});
+      }
+      const { id, cantidad } = req.body;
+
+      await this.itemUseCase.decrementarStock(id, cantidad);
+      res.status(200).json({ message: "Stock decrementado correctamente" });
+    }catch(err){
+      console.error(err);
+      res.status(500).json({message: "Ocurrió un error al actualizar el ítem"});
+      throw err;
+    }
+  };
 }

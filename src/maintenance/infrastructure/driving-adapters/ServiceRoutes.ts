@@ -6,6 +6,8 @@ import { ItemCommanAdapter } from "../../../inventory/infrastructure/driven-adap
 import { ServiceController } from "./ServicioController";
 import { MySQLEmpleadoRepository } from "../../../sales/infrastructure/driven-adapters/MySQLEmpleadoRepository";
 import { EmpleadoCommandAdapter } from "../../../sales/infrastructure/driven-adapters/EmpleadoCommandAdapter";
+import { crearServicioSchema } from "./validation/schemas/servicio.schema";
+import { validateSchema } from "../../../shared/validationMiddleware";
 
 
 const router = Router();
@@ -18,7 +20,7 @@ const serviceUseCases = new ServiceUseCases(serviceRepository, itemCommandAdapte
 const controller = new ServiceController(serviceUseCases);
 
 router.all("/", controller.getAll.bind(controller))
-router.post("/crear", controller.create.bind(controller));
+router.post("/crear", validateSchema(crearServicioSchema), controller.create.bind(controller));
 router.get("/:id", controller.getById.bind(controller));
 router.delete("/id", controller.delete.bind(controller))
 

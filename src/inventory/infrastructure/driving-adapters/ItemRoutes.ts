@@ -19,5 +19,6 @@ router.get("/:id", controller.getById.bind(controller));
 router.get("/marca/:marca", controller.getByMarca.bind(controller));
 router.post("/crear", controller.create.bind(controller));
 router.delete("/:id", controller.delete.bind(controller));
+router.post("/decrementar-stock", controller.decrementStock.bind(controller));
 
 export default router;

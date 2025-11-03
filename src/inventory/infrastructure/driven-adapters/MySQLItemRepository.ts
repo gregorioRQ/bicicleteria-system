@@ -31,8 +31,14 @@ export class MySQLItemRepository implements IItemRepositoryPort {
     );
   }
 
-  async updateStock(id: number, newStock: number): Promise<void> {
-    await pool.query("UPDATE items SET stock = ? WHERE id = ?", [newStock, id]);
+  async updateStock(id: number, newStock: number): Promise<boolean> {
+    const [rows]: any = await pool.query("UPDATE items SET stock = ? WHERE id = ?", [newStock, id]);
+    return rows.affectedRows > 0;
+  }
+
+  async decrementarStock(id: number, cantidad: number): Promise<boolean> {
+    const [rows]: any = await pool.query("UPDATE items SET stock = stock - ? WHERE id = ?", [cantidad, id]);
+    return rows.affectedRows > 0;
   }
 
   async delete(id: number): Promise<boolean> {

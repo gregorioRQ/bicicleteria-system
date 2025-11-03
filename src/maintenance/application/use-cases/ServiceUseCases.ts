@@ -38,19 +38,14 @@ export class ServiceUseCases{
                 throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
             }
 
-            if(s.tipo_servicio === TipoServicio.REPARACION && (!s.items_reparacion || s.items_reparacion.length === 0)){
+            if(s.tipo_servicio === TipoServicio.REPARACION && (!s.items_reparacion || s.items_reparacion.length <= 0)){
                 throw new Error("Se deben proporcionar los items a reparar para este servicio de REPARACIÓN");
             }else if(s.tipo_servicio === TipoServicio.REPARACION){
-                for(const item of s.items_reparacion){
-                    try{
-                    await this.itemCommand.descontarStock(item.item_id, item.cantidad);
-                    }catch(error){
-                        console.error("Error al descontar stock del item:", error);
-                        throw new Error("Ocurrio un error al descontar el stock de los items de reparacion");
-                    }
-                   
+                if(!await this.itemCommand.descontarStock(s.items_reparacion)){
+                    throw new Error("No se pudo descontar el stock de los items");
                 }
             }
+            
             const nuevo_servicio = new Service(
                 undefined,
                 s.tipo_servicio,

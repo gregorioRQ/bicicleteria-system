@@ -1,9 +1,6 @@
 import { Estado, TipoServicio } from "../model/Service";
 
-export interface ReparacionItem{
-    item_id: number;
-    cantidad: number;
-}
+
 
 export class RequestService {
     constructor(
@@ -17,6 +14,9 @@ export class RequestService {
         public estado : Estado = Estado.PENDIENTE,
         public empleado_id: bigint,
         public fecha_entrega: Date | undefined,
-        public items_reparacion: ReparacionItem[],
+        public items_reparacion: [{
+            item_id: number;
+            cantidad: number;
+        }],
     ) {}
 }
