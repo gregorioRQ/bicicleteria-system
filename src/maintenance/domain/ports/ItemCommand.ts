@@ -1,4 +1,6 @@
+import { ItemDTO } from "../model/ItemDTO";
+
 export interface ItemCommand{
-    // array de objetos [itemId, cantidad]
-    descontarStock(items: [{item_id: number, cantidad: number}]): Promise<boolean>;
+    
+    descontarStockYobtenerSuPrecioVenta(items: Array<{item_id: number, descontar: number}>): Promise<ItemDTO[]>;
 }

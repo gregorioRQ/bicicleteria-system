@@ -16,7 +16,7 @@ export class RequestService {
         public fecha_entrega: Date | undefined,
         public items_reparacion: [{
             item_id: number;
-            cantidad: number;
+            descontar: number;
         }],
     ) {}
 }

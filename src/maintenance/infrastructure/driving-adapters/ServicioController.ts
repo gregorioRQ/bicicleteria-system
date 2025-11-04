@@ -17,8 +17,8 @@ export class ServiceController{
             } = req.body;
 
             const newService = new RequestService(tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined, items_reparacion);
-            await this.serviceUseCases.registrarServicio(newService);
-            res.status(201).json({message: "Servicio creado"});
+            const serviceResponse = await this.serviceUseCases.registrarServicio(newService);
+            res.status(201).json(serviceResponse);
         }catch(error){
             console.error(error);
             res.status(500).json({message: "Error al crear el servicio"});

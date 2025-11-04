@@ -1,5 +1,6 @@
 import { RequestService } from "../../domain/model/RequestService";
 import { TipoServicio, Estado, Service } from "../../domain/model/Service";
+import { ServiceResponse } from "../../domain/model/ServiceResponse";
 import type { EmpleadoCommand } from "../../domain/ports/EmpleadoCommand";
 import type { ItemCommand } from "../../domain/ports/ItemCommand";
 import type { ServiceRepositoryOutPort } from "../../domain/repositories/ServiceRepositoryOutPort";
@@ -11,7 +12,7 @@ export class ServiceUseCases{
         private readonly empleadoCommand: EmpleadoCommand
     ){};
 
-    async registrarServicio(s: RequestService): Promise<void> {
+    async registrarServicio(s: RequestService): Promise<ServiceResponse> {
 
         try{
             if(!await this.empleadoCommand.existeEmpleado(Number(s.empleado_id))){
@@ -38,15 +39,20 @@ export class ServiceUseCases{
                 throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
             }
 
+            let itemsActualizados: Array<{nombre: string, marca: string, precio_venta: number}> = [];
             if(s.tipo_servicio === TipoServicio.REPARACION && (!s.items_reparacion || s.items_reparacion.length <= 0)){
-                throw new Error("Se deben proporcionar los items a reparar para este servicio de REPARACIÓN");
+                throw new Error("Se deben proporcionar los items a descontar del inventario para este servicio de REPARACIÓN");
             }else if(s.tipo_servicio === TipoServicio.REPARACION){
-                if(!await this.itemCommand.descontarStock(s.items_reparacion)){
-                    throw new Error("No se pudo descontar el stock de los items");
+                try{
+                    itemsActualizados = await this.itemCommand.descontarStockYobtenerSuPrecioVenta(s.items_reparacion);
+                }catch(error){
+                    throw new Error("Error al descontar el stock y obtener el precio de venta de los items: " + (error as Error).message);
                 }
+             
             }
+            const totalPiezas = this.calcularPrecioTotaldePiezas(itemsActualizados);
             
-            const nuevo_servicio = new Service(
+                const nuevo_servicio = new Service(
                 undefined,
                 s.tipo_servicio,
                 s.descripcion,
@@ -59,13 +65,31 @@ export class ServiceUseCases{
                 s.empleado_id,
                 s.fecha_entrega
             );
-            return await this.serviceRepo.save(nuevo_servicio);
+
+            await this.serviceRepo.save(nuevo_servicio);
+            return new ServiceResponse(
+                nuevo_servicio.tipo_servicio,
+                nuevo_servicio.descripcion,
+                nuevo_servicio.num_bicicleta,
+                nuevo_servicio.precio_base,
+                s.precio_base + totalPiezas,
+                itemsActualizados,
+                nuevo_servicio.estado,
+                nuevo_servicio.empleado_id,
+                nuevo_servicio.fecha_entrega,
+                totalPiezas
+            );
+            
         } catch (error) {
             console.error("Error al registrar servicio:", error);
             throw error;
         }
             
-        }
+    }
+
+    calcularPrecioTotaldePiezas(items: Array<{nombre: string, marca: string, precio_venta: number}>): number{
+        return items.reduce((total, item) => total + item.precio_venta, 0);
+    };
 
     async actualizarEstadoServicio(id: number, nuevoEstado: Estado): Promise<void> {
         // validar id

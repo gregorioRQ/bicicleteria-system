@@ -10,6 +10,40 @@ import { pool } from "../../../db";
  */
 
 export class MySQLItemRepository implements IItemRepositoryPort {
+
+  async updateStockBatch(items: Array<{ item_id: number; descontar: number; }>): Promise<Item[]> {
+    const connection = await pool.getConnection();
+  
+  try {
+    await connection.beginTransaction();
+    
+    // Actualizar cada item (pero dentro de una transacción)
+    for (const item of items) {
+      await connection.query(
+        "UPDATE items SET stock = ? WHERE id = ?",
+        [item.descontar, item.item_id]
+      );
+    }
+    
+    // Obtener todos los items actualizados en una sola query
+    const ids = items.map(item => item.item_id);
+    const [rows]: any = await connection.query(
+      `SELECT * FROM items WHERE id IN (?)`,
+      [ids]
+    );
+    
+    await connection.commit();
+    return rows;
+    
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+  }
+
+
   async findAll(): Promise<Item[]> {
     const [rows]: any = await pool.query("SELECT * FROM items");
     return rows.map(

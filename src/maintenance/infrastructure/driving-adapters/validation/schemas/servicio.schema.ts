@@ -17,7 +17,7 @@ export const crearServicioSchema = z.object({
     fecha_entrega: z.date().optional(),
     items_reparacion: z.array(z.object({
         item_id: z.number().int().positive('El ID del ítem debe ser un número positivo').max(1000000, 'El ID del ítem es demasiado alto'),
-        cantidad: z.number().int().positive('La cantidad debe ser un número positivo').max(1000000, 'La cantidad es demasiado alta'),
+        descontar: z.number().int().positive('La cantidad debe ser un número positivo').max(1000000, 'La cantidad es demasiado alta'),
     })),
 }).strict();
 
