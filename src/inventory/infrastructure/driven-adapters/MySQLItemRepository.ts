@@ -20,7 +20,7 @@ export class MySQLItemRepository implements IItemRepositoryPort {
     // Actualizar cada item (pero dentro de una transacción)
     for (const item of items) {
       await connection.query(
-        "UPDATE items SET stock = ? WHERE id = ?",
+        "UPDATE items SET stock = stock - ? WHERE id = ?",
         [item.descontar, item.item_id]
       );
     }
@@ -33,7 +33,9 @@ export class MySQLItemRepository implements IItemRepositoryPort {
     );
     
     await connection.commit();
-    return rows;
+    return rows.map(
+      (r: any) => new Item(r.id, r.nombre,r.marca ,r.precio_compra,r.precio_venta, r.stock, r.fecha_ingreso)
+    );
     
   } catch (error) {
     await connection.rollback();

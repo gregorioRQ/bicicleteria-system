@@ -103,7 +103,7 @@ export class ItemController {
     }
   }
 
-  async updateStock(req: Request, res: Response){
+  async aumentarStock(req: Request, res: Response){
     try{
 
       if(!req.body){
@@ -120,20 +120,4 @@ export class ItemController {
     }
   }
 
-  async decrementStock(req: Request, res: Response){
-    try{
-
-      if(!req.body){
-        return res.status(400).json({message: "Cuerpo de la solicitud es requerido"});
-      }
-      const { id, cantidad } = req.body;
-
-      await this.itemUseCase.decrementarStock(id, cantidad);
-      res.status(200).json({ message: "Stock decrementado correctamente" });
-    }catch(err){
-      console.error(err);
-      res.status(500).json({message: "Ocurrió un error al actualizar el ítem"});
-      throw err;
-    }
-  };
 }

@@ -45,23 +45,8 @@ export class IItemUseCase {
       if(!await this.itemRepository.updateStock(id, nuevoStock)){
         throw new Error("No se pudo descontar el stock");
       }
-      if(item.stock < 5) {
-        console.warn("El item: " + item.nombre + "se encuentra con stock bajo!");
-      }
     }
 
-    async decrementarStock(id: number, cantidad: number): Promise<void> {
-      const item = await this.itemRepository.findById(id);
-      if (!item) throw new Error("El ítem no existe.");
-      const nuevoStock = item.stock - cantidad;
-      if (nuevoStock < 0) throw new Error("El stock no puede quedar negativo.");
-      if(!await this.itemRepository.decrementarStock(id, cantidad)){
-        throw new Error("No se pudo descontar el stock");
-      }
-      if(item.stock < 5) {
-        console.warn("El item: " + item.nombre + "se encuentra con stock bajo!");
-      }
-    }
   
     async eliminarItem(id: number): Promise<void> {
       const item = await this.itemRepository.findById(id);

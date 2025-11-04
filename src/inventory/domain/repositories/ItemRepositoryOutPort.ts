@@ -15,6 +15,5 @@ export interface IItemRepositoryPort {
   delete(id: number): Promise<boolean>;
   existsByName(name: string): Promise<boolean>;
   findByName(name: string): Promise<Item | null>;
-  decrementarStock(id: number, cantidad: number): Promise<boolean>;
   updateStockBatch(items: Array<{item_id: number, descontar: number}>): Promise<Item[]>;
 }

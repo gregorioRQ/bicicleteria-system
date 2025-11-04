@@ -1,3 +1,4 @@
+import { ItemDTO } from "../../domain/model/ItemDTO";
 import { RequestService } from "../../domain/model/RequestService";
 import { TipoServicio, Estado, Service } from "../../domain/model/Service";
 import { ServiceResponse } from "../../domain/model/ServiceResponse";
@@ -39,7 +40,9 @@ export class ServiceUseCases{
                 throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
             }
 
-            let itemsActualizados: Array<{nombre: string, marca: string, precio_venta: number}> = [];
+            let itemsActualizados: Array<ItemDTO> = [];
+
+            
             if(s.tipo_servicio === TipoServicio.REPARACION && (!s.items_reparacion || s.items_reparacion.length <= 0)){
                 throw new Error("Se deben proporcionar los items a descontar del inventario para este servicio de REPARACIÓN");
             }else if(s.tipo_servicio === TipoServicio.REPARACION){
@@ -72,12 +75,12 @@ export class ServiceUseCases{
                 nuevo_servicio.descripcion,
                 nuevo_servicio.num_bicicleta,
                 nuevo_servicio.precio_base,
+                totalPiezas,
                 s.precio_base + totalPiezas,
                 itemsActualizados,
                 nuevo_servicio.estado,
                 nuevo_servicio.empleado_id,
                 nuevo_servicio.fecha_entrega,
-                totalPiezas
             );
             
         } catch (error) {
@@ -87,8 +90,8 @@ export class ServiceUseCases{
             
     }
 
-    calcularPrecioTotaldePiezas(items: Array<{nombre: string, marca: string, precio_venta: number}>): number{
-        return items.reduce((total, item) => total + item.precio_venta, 0);
+    calcularPrecioTotaldePiezas(items: Array<{nombre: string, marca: string, coste_final: number}>): number{
+        return items.reduce((total, item) => total + item.coste_final, 0);
     };
 
     async actualizarEstadoServicio(id: number, nuevoEstado: Estado): Promise<void> {
