@@ -4,11 +4,13 @@ import type { ServiceRepositoryOutPort } from "../../domain/repositories/Service
 
 
 export class MySQLServiceRepository implements ServiceRepositoryOutPort{
-    async update(id: number, s: Service): Promise<void> {
-        await pool.query(
+    async update(s: Service): Promise<boolean> {
+        const idS = s.id;
+        const [rows]: any = await pool.query(
             "UPDATE servicios SET tipo_servicio = ?, descripcion = ?, num_bicicleta = ?, precio_base = ?, precio_total = ?, costo_piezas = ?, fecha_ingreso = ?, estado = ?, empleado_id = ?, fecha_entrega = ? WHERE id = ?",
-            [s.tipo_servicio, s.descripcion, s.num_bicicleta, s.precio_base, s.precio_total, s.costo_piezas, s.fecha_ingreso, s.estado, s.empleado_id, id]
+            [s.tipo_servicio, s.descripcion, s.num_bicicleta, s.precio_base, s.precio_total, s.costo_piezas, s.fecha_ingreso, s.estado, s.empleado_id, idS]
         );
+        return rows.affectedRows > 0;
     }
     
     async findAll(): Promise<Service[]> {
@@ -40,8 +42,9 @@ export class MySQLServiceRepository implements ServiceRepositoryOutPort{
         return result.affectedRows > 0;
     }
 
-    async updateEstado(id: number, estado: string): Promise<void> {
-        await pool.query("UPDATE servicios SET estado = ? WHERE id = ?", [estado, id]);
+    async updateEstado(id: number, estado: string): Promise<boolean> {
+        const [result]: any = await pool.query("UPDATE servicios SET estado = ? WHERE id = ?", [estado, id]);
+        return result.affectedRows > 0;
     }
 
     async updateFechaEntrega(id: number, fechaEntrega: Date): Promise<void> {

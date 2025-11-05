@@ -5,8 +5,7 @@ import { Estado, TipoServicio } from "../model/Service";
 export class RequestService {
     constructor(
         public tipo_servicio: TipoServicio,
-        public descripcion: string,
-        public num_bicicleta: string,
+        public num_bicicleta: number,
         public precio_base: number,
         public precio_total: number,
         public costo_piezas: number,

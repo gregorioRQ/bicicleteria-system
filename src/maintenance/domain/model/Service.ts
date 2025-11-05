@@ -14,8 +14,8 @@ export class Service {
     constructor(
         public id: number | undefined,
         public tipo_servicio: TipoServicio,
-        public descripcion: string,
-        public num_bicicleta: string,
+        public descripcion: string | undefined,
+        public num_bicicleta: number,
         public precio_base: number,
         public precio_total: number,
         public costo_piezas: number,

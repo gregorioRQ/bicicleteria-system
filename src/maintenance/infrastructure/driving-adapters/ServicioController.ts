@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { ServiceUseCases } from "../../application/use-cases/ServiceUseCases";
-import { Service } from "../../domain/model/Service";
+import { Estado, Service } from "../../domain/model/Service";
 import { RequestService } from "../../domain/model/RequestService";
 
 
@@ -13,15 +13,15 @@ export class ServiceController{
                 return res.status(400).json({message: "Cuerpo de la solicitud vacío"});
             }
 
-            const {empleado_id, tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega, items_reparacion
+            const {empleado_id, tipo_servicio, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, fecha_entrega, items_reparacion
             } = req.body;
 
-            const newService = new RequestService(tipo_servicio, descripcion, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined, items_reparacion);
+            const newService = new RequestService(tipo_servicio, num_bicicleta, precio_base, precio_total, costo_piezas, fecha_ingreso, estado, empleado_id, undefined, items_reparacion);
             const serviceResponse = await this.serviceUseCases.registrarServicio(newService);
             res.status(201).json(serviceResponse);
         }catch(error){
             console.error(error);
-            res.status(500).json({message: "Error al crear el servicio"});
+            res.status(500).json({message: "Error al crear el servicio", error: (error as Error).message});
         
         }
 
@@ -78,4 +78,35 @@ export class ServiceController{
             res.status(500).json({message: "Error al obtener el servicio"})
         }
     }
+
+    async updateEstado(req: Request, res: Response){
+        try{
+            const idParam = req.params.id;
+            const estado = req.params.estado;
+            if (!idParam ||!estado) {
+                return res.status(400).json({ message: "id o estado son requeridos" });
+            }
+            await this.serviceUseCases.actualizarEstadoServicio(parseInt(idParam, 10), Estado[estado as keyof typeof Estado]);
+            res.status(200).json({message: "Estado del servicio actualizado."});
+
+        }catch(e){
+            res.status(500).json({message: "Error al actualizar el estado del servicio", error: (e as Error).message})
+        }
+    }
+
+      async actualizarServicio(req: Request, res: Response){
+        try{
+            const body = req.body;
+            if(!body){
+                return res.status(400).json({
+                    message: "Cuerpo de la solicitud vacío"
+                })
+            }
+            this.serviceUseCases.actualizarServicio(body);
+        }catch(err){
+            res.status(500).json({message: "Error al actualizar el servicio", error: (err as Error).message})
+        }
+
+    };
+
 }

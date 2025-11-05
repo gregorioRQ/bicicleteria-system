@@ -20,7 +20,7 @@ export class ServiceUseCases{
                 throw new Error("El empleado asignado no existe");
             }
 
-            if (!s.num_bicicleta.trim) {
+            if (!s.num_bicicleta || s.num_bicicleta === 0) {
                 throw new Error("El cliente debe tener una bicicleta asociada");
             }
     
@@ -36,9 +36,6 @@ export class ServiceUseCases{
                 throw new Error("El precio base minimo para CHEQUEO es de 1000");
             }
             
-             if (s.tipo_servicio === TipoServicio.CHEQUEO && (!s.descripcion || !s.descripcion.trim())) {
-                throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
-            }
 
             let itemsActualizados: Array<ItemDTO> = [];
 
@@ -58,7 +55,7 @@ export class ServiceUseCases{
                 const nuevo_servicio = new Service(
                 undefined,
                 s.tipo_servicio,
-                s.descripcion,
+                undefined,
                 s.num_bicicleta,
                 s.precio_base,
                 s.precio_total,
@@ -117,8 +114,10 @@ export class ServiceUseCases{
             const fechaEntrega = new Date();
             await this.serviceRepo.updateFechaEntrega(id, fechaEntrega);
         }
+        if(await this.serviceRepo.updateEstado(id, nuevoEstado) === false){
+            throw new Error("No se pudo actualizar el estado del servicio");
+        }
 
-        return await this.serviceRepo.updateEstado(id, nuevoEstado);
     }
 
     async eliminarServicio(id: number): Promise<boolean>{
@@ -133,5 +132,28 @@ export class ServiceUseCases{
 
     async obtenerServicioPorId(id: number): Promise<Service | null>{
         return await this.serviceRepo.findById(id);
+    }
+
+    async actualizarServicio(sUpdated: Service): Promise<void>{
+        if(sUpdated.id === undefined){
+            throw new Error("El servicio a actualizar debe tener un ID")
+        }
+
+        const sOld = await this.serviceRepo.findById(sUpdated.id);
+        if (!sOld) throw new Error('Servicio no encontrado');
+        if(sUpdated.estado == Estado.FINALIZADO && (!sUpdated.descripcion || !sUpdated.descripcion.trim())){
+            throw new Error("Se debe proporcionar una descripción del servicio antes de marcarlo como FINALIZADO")
+        }
+
+        if(sUpdated.estado == Estado.ENTREGADO && sOld.estado !== Estado.FINALIZADO){
+            throw new Error("Se debe finalizar el trabajo antes de poder entregarlo")
+        }
+
+         if (sUpdated.estado === Estado.ENTREGADO) {
+            // registrar fecha de entrega real
+            const fechaEntrega = new Date();
+            await this.serviceRepo.updateFechaEntrega(sUpdated.id, fechaEntrega);
+        }
+        await this.serviceRepo.update(sUpdated);
     }
 }

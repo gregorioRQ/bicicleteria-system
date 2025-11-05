@@ -3,8 +3,8 @@
 export class ServiceResponse{
     constructor(
         public tipo_servicio: string,
-        public descripcion: string,
-        public num_bicicleta: string,
+        public descripcion: string | undefined,
+        public num_bicicleta: number,
         public precio_base: number,
         public coste_total_piezas: number,
         public precio_total: number,

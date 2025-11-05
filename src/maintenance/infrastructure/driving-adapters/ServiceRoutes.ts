@@ -22,6 +22,7 @@ const controller = new ServiceController(serviceUseCases);
 router.all("/", controller.getAll.bind(controller))
 router.post("/crear", validateSchema(crearServicioSchema), controller.create.bind(controller));
 router.get("/:id", controller.getById.bind(controller));
-router.delete("/id", controller.delete.bind(controller))
+router.delete("/id", controller.delete.bind(controller));
+router.put("/actualizar-estado/:id/:estado", controller.updateEstado.bind(controller));
 
 export default router;
