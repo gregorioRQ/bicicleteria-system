@@ -1,3 +1,4 @@
+import formatearFecha from "../../../shared/fechaFormatter";
 import { ItemDTO } from "../../domain/model/ItemDTO";
 import { RequestService } from "../../domain/model/RequestService";
 import { TipoServicio, Estado, Service } from "../../domain/model/Service";
@@ -58,26 +59,32 @@ export class ServiceUseCases{
                 undefined,
                 s.num_bicicleta,
                 s.precio_base,
-                s.precio_total,
-                s.costo_piezas,
-                s.fecha_ingreso,
+                s.precio_base + totalPiezas,
+                totalPiezas,
+                s.fecha_ingreso = new Date(),
                 s.estado,
                 s.empleado_id,
-                s.fecha_entrega
+                undefined,
+                itemsActualizados
             );
 
-            await this.serviceRepo.save(nuevo_servicio);
+            const ns = await this.serviceRepo.save(nuevo_servicio);
+            if(ns === null){
+                throw new Error("Ocurrio un problema al guardar el servicio")
+            }
             return new ServiceResponse(
-                nuevo_servicio.tipo_servicio,
-                nuevo_servicio.descripcion,
-                nuevo_servicio.num_bicicleta,
-                nuevo_servicio.precio_base,
-                totalPiezas,
-                s.precio_base + totalPiezas,
+                ns.id!,
+                ns.tipo_servicio,
+                ns.descripcion,
+                ns.num_bicicleta,
+                ns.precio_base,
+                ns.costo_piezas,
+                ns.precio_total,
                 itemsActualizados,
-                nuevo_servicio.estado,
-                nuevo_servicio.empleado_id,
-                nuevo_servicio.fecha_entrega,
+                ns.estado,
+                ns.empleado_id,
+                undefined,
+                formatearFecha(ns.fecha_ingreso),
             );
             
         } catch (error) {
@@ -90,35 +97,6 @@ export class ServiceUseCases{
     calcularPrecioTotaldePiezas(items: Array<{nombre: string, marca: string, coste_final: number}>): number{
         return items.reduce((total, item) => total + item.coste_final, 0);
     };
-
-    async actualizarEstadoServicio(id: number, nuevoEstado: Estado): Promise<void> {
-        // validar id
-        if (typeof id !== 'number' || isNaN(id)) throw new Error('Id inválido');
-
-        // validar estado
-        if (!Object.values(Estado).includes(nuevoEstado)) throw new Error('Estado inválido');
-
-        const servicio = await this.serviceRepo.findById(id);
-        if (!servicio) throw new Error('Servicio no encontrado');
-
-        if(nuevoEstado == Estado.FINALIZADO && (!servicio.descripcion || !servicio.descripcion.trim())){
-            throw new Error("Se debe proporcionar una descripción del servicio antes de marcarlo como FINALIZADO")
-        }
-
-        if(nuevoEstado == Estado.ENTREGADO && servicio.estado !== Estado.FINALIZADO){
-            throw new Error("Se debe finalizar el trabajo antes de poder entregarlo")
-        }
-
-        if (nuevoEstado === Estado.ENTREGADO) {
-            // registrar fecha de entrega real
-            const fechaEntrega = new Date();
-            await this.serviceRepo.updateFechaEntrega(id, fechaEntrega);
-        }
-        if(await this.serviceRepo.updateEstado(id, nuevoEstado) === false){
-            throw new Error("No se pudo actualizar el estado del servicio");
-        }
-
-    }
 
     async eliminarServicio(id: number): Promise<boolean>{
         const servicio = await this.serviceRepo.findById(id);
@@ -134,7 +112,7 @@ export class ServiceUseCases{
         return await this.serviceRepo.findById(id);
     }
 
-    async actualizarServicio(sUpdated: Service): Promise<void>{
+    async actualizarServicio(sUpdated: Service): Promise<ServiceResponse | null>{
         if(sUpdated.id === undefined){
             throw new Error("El servicio a actualizar debe tener un ID")
         }
@@ -142,18 +120,31 @@ export class ServiceUseCases{
         const sOld = await this.serviceRepo.findById(sUpdated.id);
         if (!sOld) throw new Error('Servicio no encontrado');
         if(sUpdated.estado == Estado.FINALIZADO && (!sUpdated.descripcion || !sUpdated.descripcion.trim())){
-            throw new Error("Se debe proporcionar una descripción del servicio antes de marcarlo como FINALIZADO")
+            throw new Error("Se debe proporcionar una descripción del trabajo realizado antes de marcarlo como FINALIZADO")
         }
 
         if(sUpdated.estado == Estado.ENTREGADO && sOld.estado !== Estado.FINALIZADO){
             throw new Error("Se debe finalizar el trabajo antes de poder entregarlo")
         }
 
-         if (sUpdated.estado === Estado.ENTREGADO) {
+         if (sUpdated.estado == Estado.FINALIZADO) {
             // registrar fecha de entrega real
-            const fechaEntrega = new Date();
-            await this.serviceRepo.updateFechaEntrega(sUpdated.id, fechaEntrega);
+            sUpdated.fecha_entrega = new Date();
         }
-        await this.serviceRepo.update(sUpdated);
+        
+        try{
+
+           const sR =  await this.serviceRepo.update(sUpdated);
+           if(sR === null){
+            return null
+           }else{
+             return new ServiceResponse(sR.id!, sR.tipo_servicio, sR.descripcion, sR.num_bicicleta, sR.precio_base, sR.costo_piezas, sR.precio_total,  sR.items_empleados, sR.estado, sR.empleado_id, formatearFecha(sR.fecha_entrega)!, formatearFecha(sR.fecha_ingreso))
+           }
+          
+        }catch(err){
+            console.error(err)
+            throw new Error("Ocurrió un error al intentar actualizar el servicio");
+        }
+        
     }
 }

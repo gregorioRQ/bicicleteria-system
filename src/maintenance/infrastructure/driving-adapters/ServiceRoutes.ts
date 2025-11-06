@@ -6,7 +6,7 @@ import { ItemCommanAdapter } from "../../../inventory/infrastructure/driven-adap
 import { ServiceController } from "./ServicioController";
 import { MySQLEmpleadoRepository } from "../../../sales/infrastructure/driven-adapters/MySQLEmpleadoRepository";
 import { EmpleadoCommandAdapter } from "../../../sales/infrastructure/driven-adapters/EmpleadoCommandAdapter";
-import { crearServicioSchema } from "./validation/schemas/servicio.schema";
+import { actualizarServicioSchema, crearServicioSchema } from "./validation/schemas/servicio.schema";
 import { validateSchema } from "../../../shared/validationMiddleware";
 
 
@@ -23,6 +23,6 @@ router.all("/", controller.getAll.bind(controller))
 router.post("/crear", validateSchema(crearServicioSchema), controller.create.bind(controller));
 router.get("/:id", controller.getById.bind(controller));
 router.delete("/id", controller.delete.bind(controller));
-router.put("/actualizar-estado/:id/:estado", controller.updateEstado.bind(controller));
+router.post("/actualizar", controller.actualizarServicio.bind(controller));
 
 export default router;

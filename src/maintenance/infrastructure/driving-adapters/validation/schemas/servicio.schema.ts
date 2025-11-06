@@ -4,7 +4,6 @@ export const crearServicioSchema = z.object({
     tipo_servicio: z.enum(['REPARACION', 'CHEQUEO'], {
         error: () => ({ message: "Tipo de servicio inválido" })
     }),
-    descripcion: z.string().min(1, 'La descripción es requerida').max(255, 'La descripción debe tener menos de 255 caracteres'),
     num_bicicleta: z.number().min(1, 'El número de bicicleta es requerido'),
     precio_base: z.number().nonnegative('El precio base no puede ser negativo').max(1000000, 'El precio base es demasiado alto'),
     precio_total: z.number().nonnegative('El precio total no puede ser negativo').max(1000000, 'El precio total es demasiado alto'),
@@ -21,12 +20,12 @@ export const crearServicioSchema = z.object({
     })),
 }).strict();
 
-/*
-export const actualizarEstadoServicioSchema = z.object({
+
+export const actualizarServicioSchema = z.object({
     estado: z.enum(['PENDIENTE', 'EN_PROGRESO', 'FINALIZADO', 'ENTREGADO'], { 
-        error: () => ({ message: "Estado inválido" })
+        error: () => ({ message: "Estado inválido, prueba escribiendo en mayúscula" })
     }),
     id: z.number().int().positive('El ID del servicio debe ser un número positivo').max(1000000, 'El ID del servicio es demasiado alto'),
-}).strict();
-*/
+});
+
 export type CrearServicioDto = z.infer<typeof crearServicioSchema>;

@@ -2,6 +2,7 @@
 
 export class ServiceResponse{
     constructor(
+        public id_servicio: number,
         public tipo_servicio: string,
         public descripcion: string | undefined,
         public num_bicicleta: number,
@@ -11,6 +12,7 @@ export class ServiceResponse{
         public items_reparacion: Array<{nombre: string, marca: string, precioVenta: number}>,
         public estado: string,
         public empleado_id: bigint,
-        public fecha_entrega: Date | undefined
+        public fecha_entrega: string | undefined,
+        public fecha_ingreso: string | null
     ){}
 }

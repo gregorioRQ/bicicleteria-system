@@ -9,7 +9,7 @@ export class RequestService {
         public precio_base: number,
         public precio_total: number,
         public costo_piezas: number,
-        public fecha_ingreso: Date = new Date(),
+        public fecha_ingreso: Date | undefined,
         public estado : Estado = Estado.PENDIENTE,
         public empleado_id: bigint,
         public fecha_entrega: Date | undefined,
