@@ -14,7 +14,7 @@ export class VentaController {
             await this.ventaUseCase.registrarVenta(nuevaVenta);
             return res.status(201).json({message: "Venta registrada exitosamente"});
         } catch (error) {
-            return res.status(500).json({message: "Error al registrar la venta"});
+            return res.status(500).json({message: "Error al registrar la venta", error: (error as Error).message});
         }
     }
 }

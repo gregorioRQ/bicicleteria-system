@@ -127,9 +127,16 @@ export class ServiceUseCases{
             throw new Error("Se debe finalizar el trabajo antes de poder entregarlo")
         }
 
-         if (sUpdated.estado == Estado.FINALIZADO) {
+         if (sUpdated.estado == Estado.ENTREGADO && sOld.estado !== Estado.ENTREGADO) {
             // registrar fecha de entrega real
             sUpdated.fecha_entrega = new Date();
+        } else if (sUpdated.fecha_entrega === undefined) {
+            sUpdated.fecha_entrega = sOld.fecha_entrega;
+        }
+
+        if(sUpdated.items_empleados){
+            sUpdated.costo_piezas = this.calcularPrecioTotaldePiezas(sUpdated.items_empleados);
+            sUpdated.precio_total = sUpdated.precio_base + sUpdated.costo_piezas;
         }
         
         try{
