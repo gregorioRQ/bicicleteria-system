@@ -12,7 +12,7 @@ import { VentaUseCases } from "./sales/application/use-cases/VentaUseCases";
 import { MySQLVentaRepository } from "./sales/infrastructure/driven-adapters/MySQLVentaRepository";
 import { ServiceCommandAdapter } from "./maintenance/infrastructure/driven-adapters/ServiceCommandAdapter";
 import { ItemController } from "./inventory/infrastructure/driving-adapters/ItemController";
-import { ItemUseCase } from "./inventory/application/use-cases/ItemUseCase";
+import { IItemUseCase } from "./inventory/application/use-cases/ItemUseCase";
 
 // Repositories
 const itemRepository = new MySQLItemRepository();
@@ -26,7 +26,7 @@ const empleadoCommandAdapter = new EmpleadoCommandAdapter(empleadoRepository);
 const serviceCommandAdapter = new ServiceCommandAdapter(serviceRepository);
 
 // Use Cases
-const itemUseCase = new ItemUseCase(itemRepository);
+const itemUseCase = new IItemUseCase(itemRepository);
 const serviceUseCases = new ServiceUseCases(serviceRepository, itemCommandAdapter, empleadoCommandAdapter);
 const empleadoUseCases = new EmpleadoUseCases(empleadoRepository);
 const ventaUseCases = new VentaUseCases(ventaRepository, empleadoRepository, serviceCommandAdapter);
