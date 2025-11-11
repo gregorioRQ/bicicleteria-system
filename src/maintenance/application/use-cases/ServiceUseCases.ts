@@ -112,6 +112,12 @@ export class ServiceUseCases{
         return await this.serviceRepo.findById(id);
     }
 
+    async obtenerServiciosById(servicios_ids: number[]): Promise<Service[]>{
+        const results = await Promise.all(servicios_ids.map(id => this.serviceRepo.findById(Number(id))));
+        // filtrar nulos y devolver solo los servicios encontrados
+        return results.filter((s): s is Service => s !== null);
+    }
+
     async actualizarServicio(sUpdated: Service): Promise<ServiceResponse | null>{
         if(sUpdated.id === undefined){
             throw new Error("El servicio a actualizar debe tener un ID")

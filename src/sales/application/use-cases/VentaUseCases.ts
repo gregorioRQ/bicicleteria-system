@@ -1,30 +1,43 @@
-import { Empleado } from "../../domain/model/Empleado";
-import type { Venta } from "../../domain/model/Venta";
+import { Venta } from "../../domain/model/Venta";
 import type { VentaRepositoryOutPort } from "../../domain/repositories/VentaRepositoryOutPort";
-import type { EmpleadoRepositoryOutPort } from "../../domain/repositories/EmpleadoRepositoryOutPort";
 import { VentaResponse } from "../../domain/model/VentaResponse";
 import { IMaintenanceServicePort } from "../../domain/ports/IMaintenanceServicePort";
+import { MySQLEmpleadoRepository } from "../../infrastructure/driven-adapters/MySQLEmpleadoRepository";
+import { VentaRequest } from "../../domain/model/VentaRequest";
+
 
 
 export class VentaUseCases{
     constructor(
         private readonly ventaRepository: VentaRepositoryOutPort,
-        private readonly empleadoRepository: EmpleadoRepositoryOutPort,
+        private readonly empleadoRepo: MySQLEmpleadoRepository,
         private readonly maintenanceService: IMaintenanceServicePort
     ){};
 
-    async registrarVenta(v: Venta): Promise<VentaResponse>{
+    async registrarVenta(v: VentaRequest): Promise<VentaResponse>{
         const empleado_id = Number(v.empleado_id);
-        const empleado = await this.empleadoRepository.findById(empleado_id);
-        if(empleado === null){
+        const empleadoExists = await this.empleadoRepo.findById(empleado_id);
+        if(!empleadoExists){
             throw new Error("Empleado no encontrado");
         }
-        // por el momento solo traera un true o false mas adelante traera mas si el cliente esta asociado a mas de uno
-        const service = await this.maintenanceService.getServiceById(Number(v.servicio_id))
-        if(service == null){
-            throw new Error("Servicio no encontrado")
-        }
-        const res = await this.ventaRepository.save(v);
+        
+        const services = await this.maintenanceService.getServicesById(v.servicios_ids)
+
+        const nuevaVenta = new Venta(
+            undefined, 
+            new Date(),
+            // hay que hallar un metodo para calcular el total
+            39,
+            v.metodo_pago,
+            v.tipo_venta,
+            v.empleado_id,
+            v.cliente_nombre,
+            v.cliente_telefono,
+            v.cliente_dni,
+            v.servicios_ids
+        )
+        
+        const res = await this.ventaRepository.save(nuevaVenta);
         if(res == null){
             throw new Error("No se pudo guardar el servicio")
         }
@@ -35,7 +48,7 @@ export class VentaUseCases{
             res.tipo_venta,
             res.cliente_nombre,
             res.cliente_dni,
-            service
+            services
         );
         return vr;
     }

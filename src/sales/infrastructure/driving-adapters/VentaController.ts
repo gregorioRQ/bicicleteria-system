@@ -1,15 +1,16 @@
 import { VentaUseCases } from "../../application/use-cases/VentaUseCases";
 import type { Request, Response } from "express";
 import { Venta } from "../../domain/model/Venta";
+import { VentaRequest } from "../../domain/model/VentaRequest";
 
 export class VentaController {
     constructor(private readonly ventaUseCase: VentaUseCases){};
 
     async crearVenta(req: Request, res: Response){
         try {
-            const { total, metodo_pago, tipo_venta, empleado_id,servicio_id, cliente_nombre, cliente_telefono, cliente_dni } = req.body;
+            const { metodo_pago, tipo_venta, empleado_id, cliente_nombre, cliente_telefono, cliente_dni, servicios_ids } = req.body;
 
-            const nuevaVenta = new Venta(undefined, undefined, total, metodo_pago, tipo_venta, empleado_id, servicio_id, cliente_nombre, cliente_telefono, cliente_dni);
+            const nuevaVenta = new VentaRequest(cliente_nombre, cliente_dni, cliente_telefono, empleado_id, metodo_pago, tipo_venta, servicios_ids);
 
             const result = await this.ventaUseCase.registrarVenta(nuevaVenta);
             return res.status(201).json({message: "Venta registrada exitosamente", result});

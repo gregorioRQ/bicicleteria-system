@@ -9,6 +9,6 @@ export class VentaResponse{
         public tipo_venta: Tipo,
         public cliente_nombre: string,
         public cliente_dni: string,
-        public service: ServiceInfoForSale
+        public service: ServiceInfoForSale[]
     ){};
 }

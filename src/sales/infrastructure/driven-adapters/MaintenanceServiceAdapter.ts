@@ -5,17 +5,14 @@ import { IMaintenanceServicePort } from "../../domain/ports/IMaintenanceServiceP
 export class MaintenanceServiceAdapter implements IMaintenanceServicePort{
 
     constructor(private readonly serviceUseCases: ServiceUseCases){}
-
-    async getServiceById(id: number): Promise<ServiceInfoForSale | null> {
-        const service = await this.serviceUseCases.obtenerServicioPorId(id);
-        if(service && service.id){
-            return {
-                id: service.id.toString(),
-                name: service.tipo_servicio,
-                price: service.precio_total
-            }
-        }
-        return null;
+    
+     async getServicesById(services_ids: number[]): Promise<ServiceInfoForSale[]> {
+        const services = await this.serviceUseCases.obtenerServiciosById(services_ids);
+        return services.map(s => ({
+            id: s.id !== undefined ? s.id.toString() : "",
+            name: s.tipo_servicio,
+            price: s.precio_total
+        }));
     }
 
 }

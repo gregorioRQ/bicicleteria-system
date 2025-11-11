@@ -1,8 +1,9 @@
-import { EmpleadoCommand } from "../../../maintenance/domain/ports/EmpleadoCommand";
-import { EmpleadoRepositoryOutPort } from "../../domain/repositories/EmpleadoRepositoryOutPort";
+
+import { EmpleadoRepositoryOutPort } from "../../../sales/domain/repositories/EmpleadoRepositoryOutPort";
+import { EmpleadoCommand } from "../../domain/ports/EmpleadoCommand";
 
 
-export class EmpleadoCommandAdapter implements EmpleadoCommand{
+export class EmpleadoCommandAdapter implements EmpleadoCommand {
     constructor(private readonly empleadoRepo: EmpleadoRepositoryOutPort){};
     async existeEmpleado(id: number): Promise<boolean> {
         // retorna true si el empleado existe, false si no

@@ -1,7 +1,7 @@
 
-import { ItemDTO } from "../../../maintenance/domain/model/ItemDTO";
-import type { ItemCommand } from "../../../maintenance/domain/ports/ItemCommand";
-import { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort";
+import { ItemDTO } from "../../domain/model/ItemDTO";
+import type { ItemCommand } from "../../domain/ports/ItemCommand";
+import { IItemRepositoryPort } from "../../../inventory/domain/repositories/ItemRepositoryOutPort";
 
 
 export class ItemCommanAdapter implements ItemCommand{
