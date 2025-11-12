@@ -98,6 +98,11 @@ export class ServiceUseCases{
         return items.reduce((total, item) => total + item.coste_final, 0);
     };
 
+    // Nuevo: calcular costo de piezas a partir de items_empleados (cantidad * precioVenta)
+    calcularCostoPiezasDesdeItemsEmpleados(items: Array<{ cantidad: number; precioVenta: number }>): number {
+        return items.reduce((total, it) => total + (Number(it.cantidad || 0) * Number(it.precioVenta || 0)), 0);
+    }
+
     async eliminarServicio(id: number): Promise<boolean>{
         const servicio = await this.serviceRepo.findById(id);
         if(!servicio) throw new Error("El servicio no existe o ya fue eliminado.");
@@ -133,25 +138,30 @@ export class ServiceUseCases{
             throw new Error("Se debe finalizar el trabajo antes de poder entregarlo")
         }
 
-         if (sUpdated.estado == Estado.ENTREGADO && sOld.estado !== Estado.ENTREGADO) {
-            // registrar fecha de entrega real
+        // Si se marca ENTREGADO ahora y antes no lo estaba, registrar fecha de entrega real
+        if (sUpdated.estado == Estado.ENTREGADO && sOld.estado !== Estado.ENTREGADO) {
             sUpdated.fecha_entrega = new Date();
-        } else if (sUpdated.fecha_entrega === undefined) {
+        }
+        // Si no se proporciona fecha_entrega, conservar la existente en sOld
+        if (sUpdated.fecha_entrega === undefined || sUpdated.fecha_entrega === null) {
             sUpdated.fecha_entrega = sOld.fecha_entrega;
         }
 
+        let itemsActualizados = sUpdated.items_empleados || [];
+
         if(sUpdated.items_empleados){
-            sUpdated.costo_piezas = this.calcularPrecioTotaldePiezas(sUpdated.items_empleados);
+            // usar la nueva función que calcula cantidad * precioVenta
+            sUpdated.costo_piezas = this.calcularCostoPiezasDesdeItemsEmpleados(sUpdated.items_empleados as Array<{cantidad:number, precioVenta:number}>);
             sUpdated.precio_total = sUpdated.precio_base + sUpdated.costo_piezas;
+            itemsActualizados = sUpdated.items_empleados; // guardar los items actualizados
         }
         
         try{
-
            const sR =  await this.serviceRepo.update(sUpdated);
            if(sR === null){
             return null
            }else{
-             return new ServiceResponse(sR.id!, sR.tipo_servicio, sR.descripcion, sR.num_bicicleta, sR.precio_base, sR.costo_piezas, sR.precio_total,  sR.items_empleados, sR.estado, sR.empleado_id, formatearFecha(sR.fecha_entrega)!, formatearFecha(sR.fecha_ingreso))
+             return new ServiceResponse(sR.id!, sR.tipo_servicio, sR.descripcion, sR.num_bicicleta, sR.precio_base, sR.costo_piezas, sR.precio_total, itemsActualizados, sR.estado, sR.empleado_id, formatearFecha(sR.fecha_entrega)!, formatearFecha(sR.fecha_ingreso))
            }
           
         }catch(err){

@@ -1,11 +1,6 @@
 import { Item } from "../../domain/model/Item";
 import type { IItemRepositoryPort } from "../../domain/repositories/ItemRepositoryOutPort";
 
-/**
- * Puerto de entrada: Define los casos de uso para gestionar productos
- * Esta es una interfaz que será implementada por los servicios de dominio.
- * Define qué operaciones ofrece el dominio al exterior (controladores, API, etc.)
- */
 export class IItemUseCase {
   constructor(private readonly itemRepository: IItemRepositoryPort) {}
   
@@ -22,10 +17,7 @@ export class IItemUseCase {
     }
   
     async crearItem(item: Item): Promise<void> {
-      if (!item.nombre.trim()) throw new Error("El nombre del ítem es obligatorio.");
-      if (item.precioVenta <= 0) throw new Error("El precio debe ser mayor a 0.");
-      if (item.stock < 0) throw new Error("El stock no puede ser negativo.");
-
+      
       // si el item a crear ya existe solo se incrementa su stock.
       const existing = await this.itemRepository.findByName(item.nombre);
       if (existing) {
@@ -33,7 +25,7 @@ export class IItemUseCase {
         await this.itemRepository.updateStock(existing.id, nuevoStock);
         return; // no guardar un nuevo registro
       }
-
+      item.fechaIngreso = new Date();
       await this.itemRepository.save(item);
     }
   

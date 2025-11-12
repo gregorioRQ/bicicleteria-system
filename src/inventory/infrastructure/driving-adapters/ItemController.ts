@@ -3,12 +3,6 @@ import type { IItemUseCase } from "../../application/use-cases/ItemUseCase";
 import { Item } from "../../domain/model/Item";
 import { start } from "repl";
 
-/**
- * Adaptador de Entrada: Controlador rest.
- * Usa el puerto de entrada (interfaz ItemUseCase), no el repositorio directo.
- */
-
-
 export class ItemController {
   constructor(private itemUseCase: IItemUseCase) {}
 
@@ -41,7 +35,7 @@ export class ItemController {
       }
       res.status(200).json(item);
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener el ítem" });
+      res.status(500).json({ message: "Error al obtener el ítem", error: (error as Error).message });
     }
   }
 
@@ -55,7 +49,7 @@ export class ItemController {
       res.status(200).json(items);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Error al obtener los ítems" });
+      res.status(500).json({ message: "Error al obtener los ítems", error: (error as Error).message });
     }
   }
 
@@ -80,7 +74,7 @@ export class ItemController {
       res.status(201).json({ message: "Ítem creado correctamente" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Error al crear el ítem" });
+      res.status(500).json({ message: "Error al crear el ítem", error: (error as Error).message });
     }
   }
 
@@ -99,7 +93,9 @@ export class ItemController {
       await this.itemUseCase.eliminarItem(id);
       res.status(200).json({ message: "Item eliminado correctamente" });
     } catch (error) {
-      res.status(500).json({ message: "Error al eliminar el ítem" });
+      res.status(500).json({ message: "Error al eliminar el ítem", 
+        error: (error as Error).message
+       });
     }
   }
 
@@ -115,7 +111,9 @@ export class ItemController {
       res.status(200).json({ message: "Stock actualizado correctamente" });
     }catch(err){
       console.error(err);
-      res.status(500).json({message: "Ocurrió un error al actualizar el ítem"});
+      res.status(500).json({message: "Ocurrió un error al actualizar el ítem",
+        error: (err as Error).message
+      });
       throw err;
     }
   }

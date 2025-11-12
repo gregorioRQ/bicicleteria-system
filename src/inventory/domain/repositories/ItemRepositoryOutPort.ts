@@ -1,11 +1,5 @@
 import { Item } from "../model/Item";
 
-/**
- * Puerto de salida: Define las operaciones de persistencia
- * Esta interfaz será implementada por adaptadores de infraestructura.
- * Define qué necesita el dominio del mundo exterior (sin saber cómo se implementa).
- * el dominio la usa para trabajar con el exterior.
- */
 export interface IItemRepositoryPort {
   findAll(): Promise<Item[]>;
   findById(id: number): Promise<Item | null>;

@@ -10,7 +10,7 @@ export const createServiceRouter = (controller: ServiceController): Router => {
     router.post("/crear", validateSchema(crearServicioSchema), controller.create.bind(controller));
     router.get("/:id", controller.getById.bind(controller));
     router.delete("/id", controller.delete.bind(controller));
-    router.put("/actualizar", controller.actualizarServicio.bind(controller));
+    router.put("/actualizar", validateSchema(actualizarServicioSchema),controller.actualizarServicio.bind(controller));
 
     return router;
 };

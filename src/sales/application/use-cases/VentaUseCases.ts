@@ -22,12 +22,14 @@ export class VentaUseCases{
         }
         
         const services = await this.maintenanceService.getServicesById(v.servicios_ids)
+        
+        // calcular total sumando la propiedad `price` de cada ServiceInfoForSale
+        const total = services.reduce((sum, svc) => sum + (Number(svc.price) || 0), 0);
 
         const nuevaVenta = new Venta(
             undefined, 
             new Date(),
-            // hay que hallar un metodo para calcular el total
-            39,
+            total,
             v.metodo_pago,
             v.tipo_venta,
             v.empleado_id,

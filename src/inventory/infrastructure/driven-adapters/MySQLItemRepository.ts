@@ -2,12 +2,6 @@ import type { IItemRepositoryPort } from "../../domain/repositories/ItemReposito
 import { Item } from "../../domain/model/Item";
 import { pool } from "../../../db"; 
 
-/**
- * Adaptador de Salida: 
- * Esta clase implementa el puerto de salida (ItemRepository(carpeta out))
- * Puede ser reemplazada por una implementación con JPA, MongoDB, etc.
- * Implementa el puerto de salida y usa la conexión mysql2/promise.
- */
 
 export class MySQLItemRepository implements IItemRepositoryPort {
 
@@ -95,7 +89,7 @@ export class MySQLItemRepository implements IItemRepositoryPort {
   }
 
   async findByMarca(marca: string): Promise<Item[]> {
-    // Perform a case-insensitive match on marca
+    
     const [rows]: any = await pool.query(
       "SELECT * FROM items WHERE LOWER(marca) = LOWER(?)",
       [marca]

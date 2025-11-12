@@ -11,7 +11,8 @@ export class MaintenanceServiceAdapter implements IMaintenanceServicePort{
         return services.map(s => ({
             id: s.id !== undefined ? s.id.toString() : "",
             name: s.tipo_servicio,
-            price: s.precio_total
+            price: s.precio_total,
+            descripcion: s.descripcion != undefined ? s.descripcion : ""
         }));
     }
 

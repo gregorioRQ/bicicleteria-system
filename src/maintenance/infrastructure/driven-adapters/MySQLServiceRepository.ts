@@ -8,9 +8,9 @@ import { format } from 'date-fns';
 export class MySQLServiceRepository implements ServiceRepositoryOutPort{
     async update(s: Service): Promise<Service | null> {
         const idS = s.id;
-
+    const itemsEmpleadosJson = JSON.stringify(s.items_empleados);
     const [rows]: any = await pool.query(
-        "UPDATE servicios SET tipo_servicio = ?, descripcion = ?, num_bicicleta = ?, precio_base = ?, precio_total = ?, costo_piezas = ?, fecha_ingreso = ?, estado = ?, empleado_id = ?, fecha_entrega = ? WHERE id = ?",
+        "UPDATE servicios SET tipo_servicio = ?, descripcion = ?, num_bicicleta = ?, precio_base = ?, precio_total = ?, costo_piezas = ?, fecha_ingreso = ?, estado = ?, empleado_id = ?, fecha_entrega = ?, items_empleados = ? WHERE id = ?",
         [
             s.tipo_servicio, 
             s.descripcion, 
@@ -21,7 +21,8 @@ export class MySQLServiceRepository implements ServiceRepositoryOutPort{
             formatearFecha(s.fecha_ingreso), 
             s.estado, 
             s.empleado_id, 
-            formatearFecha(s.fecha_entrega), 
+            formatearFecha(s.fecha_entrega),
+            itemsEmpleadosJson, 
             idS  
         ]
     );
