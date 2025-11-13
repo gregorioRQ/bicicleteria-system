@@ -2,10 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemController = void 0;
 const Item_1 = require("../../domain/model/Item");
-/**
- * Adaptador de Entrada: Controlador rest.
- * Usa el puerto de entrada (interfaz ItemUseCase), no el repositorio directo.
- */
 class ItemController {
     constructor(itemUseCase) {
         this.itemUseCase = itemUseCase;
@@ -37,7 +33,7 @@ class ItemController {
             res.status(200).json(item);
         }
         catch (error) {
-            res.status(500).json({ message: "Error al obtener el ítem" });
+            res.status(500).json({ message: "Error al obtener el ítem", error: error.message });
         }
     }
     async getByMarca(req, res) {
@@ -51,7 +47,7 @@ class ItemController {
         }
         catch (error) {
             console.error(error);
-            res.status(500).json({ message: "Error al obtener los ítems" });
+            res.status(500).json({ message: "Error al obtener los ítems", error: error.message });
         }
     }
     async create(req, res) {
@@ -72,7 +68,7 @@ class ItemController {
         }
         catch (error) {
             console.error(error);
-            res.status(500).json({ message: "Error al crear el ítem" });
+            res.status(500).json({ message: "Error al crear el ítem", error: error.message });
         }
     }
     async delete(req, res) {
@@ -89,7 +85,26 @@ class ItemController {
             res.status(200).json({ message: "Item eliminado correctamente" });
         }
         catch (error) {
-            res.status(500).json({ message: "Error al eliminar el ítem" });
+            res.status(500).json({ message: "Error al eliminar el ítem",
+                error: error.message
+            });
+        }
+    }
+    async aumentarStock(req, res) {
+        try {
+            if (!req.body) {
+                return res.status(400).json({ message: "Cuerpo de la solicitud es requerido" });
+            }
+            const { id, cantidad } = req.body;
+            await this.itemUseCase.actualizarStock(id, cantidad);
+            res.status(200).json({ message: "Stock actualizado correctamente" });
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ message: "Ocurrió un error al actualizar el ítem",
+                error: err.message
+            });
+            throw err;
         }
     }
 }

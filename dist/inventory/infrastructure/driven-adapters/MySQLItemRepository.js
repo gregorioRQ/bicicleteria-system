@@ -3,13 +3,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MySQLItemRepository = void 0;
 const Item_1 = require("../../domain/model/Item");
 const db_1 = require("../../../db");
-/**
- * Adaptador de Salida:
- * Esta clase implementa el puerto de salida (ItemRepository(carpeta out))
- * Puede ser reemplazada por una implementación con JPA, MongoDB, etc.
- * Implementa el puerto de salida y usa la conexión mysql2/promise.
- */
 class MySQLItemRepository {
+    async updateStockBatch(items) {
+        const connection = await db_1.pool.getConnection();
+        try {
+            await connection.beginTransaction();
+            // Actualizar cada item (pero dentro de una transacción)
+            for (const item of items) {
+                await connection.query("UPDATE items SET stock = stock - ? WHERE id = ?", [item.descontar, item.item_id]);
+            }
+            // Obtener todos los items actualizados en una sola query
+            const ids = items.map(item => item.item_id);
+            const [rows] = await connection.query(`SELECT * FROM items WHERE id IN (?)`, [ids]);
+            await connection.commit();
+            return rows.map((r) => new Item_1.Item(r.id, r.nombre, r.marca, r.precio_compra, r.precio_venta, r.stock, r.fecha_ingreso));
+        }
+        catch (error) {
+            await connection.rollback();
+            throw error;
+        }
+        finally {
+            connection.release();
+        }
+    }
     async findAll() {
         const [rows] = await db_1.pool.query("SELECT * FROM items");
         return rows.map((r) => new Item_1.Item(r.id, r.nombre, r.marca, r.precio_compra, r.precio_venta, r.stock, r.fecha_ingreso));
@@ -25,7 +41,12 @@ class MySQLItemRepository {
         await db_1.pool.query("INSERT INTO items (nombre, marca, precio_compra, stock, fecha_ingreso, precio_venta) VALUES (?, ?, ?, ?, ?, ?)", [item.nombre, item.marca, item.precioCompra, item.stock, item.fechaIngreso, item.precioVenta]);
     }
     async updateStock(id, newStock) {
-        await db_1.pool.query("UPDATE items SET stock = ? WHERE id = ?", [newStock, id]);
+        const [rows] = await db_1.pool.query("UPDATE items SET stock = ? WHERE id = ?", [newStock, id]);
+        return rows.affectedRows > 0;
+    }
+    async decrementarStock(id, cantidad) {
+        const [rows] = await db_1.pool.query("UPDATE items SET stock = stock - ? WHERE id = ?", [cantidad, id]);
+        return rows.affectedRows > 0;
     }
     async delete(id) {
         const [result] = await db_1.pool.query("DELETE FROM items WHERE id = ?", [id]);
@@ -43,7 +64,6 @@ class MySQLItemRepository {
         return new Item_1.Item(r.id, r.nombre, r.marca, r.precio_compra, r.precio_venta, r.stock, r.fecha_ingreso);
     }
     async findByMarca(marca) {
-        // Perform a case-insensitive match on marca
         const [rows] = await db_1.pool.query("SELECT * FROM items WHERE LOWER(marca) = LOWER(?)", [marca]);
         return rows.map((r) => new Item_1.Item(r.id, r.nombre, r.marca, r.precio_compra, r.precio_venta, r.stock, r.fecha_ingreso));
     }

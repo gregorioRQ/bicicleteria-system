@@ -16,6 +16,7 @@ class EmpleadoUseCases {
         if (empleadoExistente?.telefono === empleado.telefono) {
             throw new Error("El teléfono ya está registrado.");
         }
+        console.log("Empleado a crear:", empleado);
         await this.empleadoRepository.save(empleado);
     }
     async obtenerEmpleados() {

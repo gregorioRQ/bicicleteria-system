@@ -60,4 +60,15 @@ export class VentaUseCases{
         // al  modulo maintenance
         return null;
     }
+
+    async eliminarVenta(id: number): Promise<void>{
+        if(!id || id===null || id < 0){
+            throw new Error("El id es inválido.")
+        }
+        try{
+            await this.ventaRepository.delete(id);
+        }catch(err){
+            throw err
+        }
+    }
 }

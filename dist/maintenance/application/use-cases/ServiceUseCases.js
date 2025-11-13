@@ -1,68 +1,127 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceUseCases = void 0;
+const fechaFormatter_1 = __importDefault(require("../../../shared/fechaFormatter"));
 const Service_1 = require("../../domain/model/Service");
+const ServiceResponse_1 = require("../../domain/model/ServiceResponse");
 class ServiceUseCases {
-    constructor(serviceRepo, itemCommand) {
+    constructor(serviceRepo, itemCommand, empleadoCommand) {
         this.serviceRepo = serviceRepo;
         this.itemCommand = itemCommand;
+        this.empleadoCommand = empleadoCommand;
     }
     ;
     async registrarServicio(s) {
-        if (!s.num_bicicleta.trim) {
-            throw new Error("El cliente debe tener una bicicleta asociada");
+        try {
+            if (!await this.empleadoCommand.existeEmpleado(Number(s.empleado_id))) {
+                throw new Error("El empleado asignado no existe");
+            }
+            if (!s.num_bicicleta || s.num_bicicleta === 0) {
+                throw new Error("El cliente debe tener una bicicleta asociada");
+            }
+            if (s.tipo_servicio !== Service_1.TipoServicio.REPARACION && s.tipo_servicio !== Service_1.TipoServicio.CHEQUEO) {
+                throw new Error("El tipo de servicio debe ser válido (solo Reparación o Chequeo)");
+            }
+            if (s.tipo_servicio == Service_1.TipoServicio.REPARACION && s.precio_base < 2000) {
+                throw new Error("El precio base minimo para REPARACIÓN es de 2000");
+            }
+            if (s.tipo_servicio == Service_1.TipoServicio.CHEQUEO && s.precio_base < 1000) {
+                throw new Error("El precio base minimo para CHEQUEO es de 1000");
+            }
+            let itemsActualizados = [];
+            if (s.tipo_servicio === Service_1.TipoServicio.REPARACION && (!s.items_reparacion || s.items_reparacion.length <= 0)) {
+                throw new Error("Se deben proporcionar los items a descontar del inventario para este servicio de REPARACIÓN");
+            }
+            else if (s.tipo_servicio === Service_1.TipoServicio.REPARACION) {
+                try {
+                    itemsActualizados = await this.itemCommand.descontarStockYobtenerSuPrecioVenta(s.items_reparacion);
+                }
+                catch (error) {
+                    throw new Error("Error al descontar el stock y obtener el precio de venta de los items: " + error.message);
+                }
+            }
+            const totalPiezas = this.calcularPrecioTotaldePiezas(itemsActualizados);
+            const nuevo_servicio = new Service_1.Service(undefined, s.tipo_servicio, undefined, s.num_bicicleta, s.precio_base, s.precio_base + totalPiezas, totalPiezas, s.fecha_ingreso = new Date(), s.estado, s.empleado_id, undefined, itemsActualizados);
+            const ns = await this.serviceRepo.save(nuevo_servicio);
+            if (ns === null) {
+                throw new Error("Ocurrio un problema al guardar el servicio");
+            }
+            return new ServiceResponse_1.ServiceResponse(ns.id, ns.tipo_servicio, ns.descripcion, ns.num_bicicleta, ns.precio_base, ns.costo_piezas, ns.precio_total, itemsActualizados, ns.estado, ns.empleado_id, undefined, (0, fechaFormatter_1.default)(ns.fecha_ingreso));
         }
-        if (s.tipo_servicio !== Service_1.TipoServicio.REPARACION && s.tipo_servicio !== Service_1.TipoServicio.CHEQUEO) {
-            throw new Error("El tipo de servicio debe ser válido (solo Reparación o Chequeo)");
+        catch (error) {
+            console.error("Error al registrar servicio:", error);
+            throw error;
         }
-        if (s.tipo_servicio == Service_1.TipoServicio.REPARACION && s.precio_base < 2000) {
-            throw new Error("El precio base minimo para REPARACIÓN es de 2000");
-        }
-        if (s.tipo_servicio == Service_1.TipoServicio.CHEQUEO && s.precio_base < 1000) {
-            throw new Error("El precio base minimo para CHEQUEO es de 1000");
-        }
-        if (s.tipo_servicio === Service_1.TipoServicio.CHEQUEO && (!s.descripcion || !s.descripcion.trim())) {
-            throw new Error("Se debe proporcionar una descripción para este tipo de servicio");
-        }
-        //items a descontar del stock para la reparacion
-        //this.itemCommand.descontarStock(2, 4);
-        //s.estado = Estado.PENDIENTE;
-        this.serviceRepo.save(s);
     }
-    async actualizarEstadoServicio(id, nuevoEstado) {
-        // validar id
-        if (typeof id !== 'number' || isNaN(id))
-            throw new Error('Id inválido');
-        // validar estado
-        if (!Object.values(Service_1.Estado).includes(nuevoEstado))
-            throw new Error('Estado inválido');
-        const servicio = await this.serviceRepo.findById(id);
-        if (!servicio)
-            throw new Error('Servicio no encontrado');
-        if (nuevoEstado == Service_1.Estado.FINALIZADO && (!servicio.descripcion || !servicio.descripcion.trim())) {
-            throw new Error("Se debe proporcionar una descripción del servicio antes de marcarlo como FINALIZADO");
-        }
-        if (nuevoEstado == Service_1.Estado.ENTREGADO && servicio.estado !== Service_1.Estado.FINALIZADO) {
-            throw new Error("Se debe finalizar el trabajo antes de poder entregarlo");
-        }
-        if (nuevoEstado === Service_1.Estado.ENTREGADO) {
-            // registrar fecha de entrega real
-            const fechaEntrega = new Date();
-            await this.serviceRepo.updateFechaEntrega(id, fechaEntrega);
-        }
-        await this.serviceRepo.updateEstado(id, nuevoEstado);
+    calcularPrecioTotaldePiezas(items) {
+        return items.reduce((total, item) => total + item.coste_final, 0);
+    }
+    ;
+    // Nuevo: calcular costo de piezas a partir de items_empleados (cantidad * precioVenta)
+    calcularCostoPiezasDesdeItemsEmpleados(items) {
+        return items.reduce((total, it) => total + (Number(it.cantidad || 0) * Number(it.precioVenta || 0)), 0);
     }
     async eliminarServicio(id) {
         const servicio = await this.serviceRepo.findById(id);
         if (!servicio)
             throw new Error("El servicio no existe o ya fue eliminado.");
-        await this.serviceRepo.delete(id);
+        return await this.serviceRepo.delete(id);
     }
     async listarServicios() {
-        return this.serviceRepo.findAll();
+        return await this.serviceRepo.findAll();
     }
     async obtenerServicioPorId(id) {
-        return this.serviceRepo.findById(id);
+        return await this.serviceRepo.findById(id);
+    }
+    async obtenerServiciosById(servicios_ids) {
+        const results = await Promise.all(servicios_ids.map(id => this.serviceRepo.findById(Number(id))));
+        // filtrar nulos y devolver solo los servicios encontrados
+        return results.filter((s) => s !== null);
+    }
+    async actualizarServicio(sUpdated) {
+        if (sUpdated.id === undefined) {
+            throw new Error("El servicio a actualizar debe tener un ID");
+        }
+        const sOld = await this.serviceRepo.findById(sUpdated.id);
+        if (!sOld)
+            throw new Error('Servicio no encontrado');
+        if (sUpdated.estado == Service_1.Estado.FINALIZADO && (!sUpdated.descripcion || !sUpdated.descripcion.trim())) {
+            throw new Error("Se debe proporcionar una descripción del trabajo realizado antes de marcarlo como FINALIZADO");
+        }
+        if (sUpdated.estado == Service_1.Estado.ENTREGADO && sOld.estado !== Service_1.Estado.FINALIZADO) {
+            throw new Error("Se debe finalizar el trabajo antes de poder entregarlo");
+        }
+        // Si se marca ENTREGADO ahora y antes no lo estaba, registrar fecha de entrega real
+        if (sUpdated.estado == Service_1.Estado.ENTREGADO && sOld.estado !== Service_1.Estado.ENTREGADO) {
+            sUpdated.fecha_entrega = new Date();
+        }
+        // Si no se proporciona fecha_entrega, conservar la existente en sOld
+        if (sUpdated.fecha_entrega === undefined || sUpdated.fecha_entrega === null) {
+            sUpdated.fecha_entrega = sOld.fecha_entrega;
+        }
+        let itemsActualizados = sUpdated.items_empleados || [];
+        if (sUpdated.items_empleados) {
+            // usar la nueva función que calcula cantidad * precioVenta
+            sUpdated.costo_piezas = this.calcularCostoPiezasDesdeItemsEmpleados(sUpdated.items_empleados);
+            sUpdated.precio_total = sUpdated.precio_base + sUpdated.costo_piezas;
+            itemsActualizados = sUpdated.items_empleados; // guardar los items actualizados
+        }
+        try {
+            const sR = await this.serviceRepo.update(sUpdated);
+            if (sR === null) {
+                return null;
+            }
+            else {
+                return new ServiceResponse_1.ServiceResponse(sR.id, sR.tipo_servicio, sR.descripcion, sR.num_bicicleta, sR.precio_base, sR.costo_piezas, sR.precio_total, itemsActualizados, sR.estado, sR.empleado_id, (0, fechaFormatter_1.default)(sR.fecha_entrega), (0, fechaFormatter_1.default)(sR.fecha_ingreso));
+            }
+        }
+        catch (err) {
+            console.error(err);
+            throw new Error("Ocurrió un error al intentar actualizar el servicio");
+        }
     }
 }
 exports.ServiceUseCases = ServiceUseCases;

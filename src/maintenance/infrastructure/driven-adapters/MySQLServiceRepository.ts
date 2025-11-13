@@ -59,7 +59,7 @@ export class MySQLServiceRepository implements ServiceRepositoryOutPort{
     }
 
     async delete(id: number): Promise<boolean> {
-        const [result]: any = await pool.query("DELETE FROM ventas WHERE id = ?", [id]);
+        const [result]: any = await pool.query("DELETE FROM servicios WHERE id = ?", [id]);
         return result.affectedRows > 0;
     }
 

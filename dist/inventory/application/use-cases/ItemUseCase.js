@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IItemUseCase = void 0;
-/**
- * Puerto de entrada: Define los casos de uso para gestionar productos
- * Esta es una interfaz que será implementada por los servicios de dominio.
- * Define qué operaciones ofrece el dominio al exterior (controladores, API, etc.)
- */
 class IItemUseCase {
     constructor(itemRepository) {
         this.itemRepository = itemRepository;
@@ -20,12 +15,6 @@ class IItemUseCase {
         return this.itemRepository.findByMarca(marca);
     }
     async crearItem(item) {
-        if (!item.nombre.trim())
-            throw new Error("El nombre del ítem es obligatorio.");
-        if (item.precioVenta <= 0)
-            throw new Error("El precio debe ser mayor a 0.");
-        if (item.stock < 0)
-            throw new Error("El stock no puede ser negativo.");
         // si el item a crear ya existe solo se incrementa su stock.
         const existing = await this.itemRepository.findByName(item.nombre);
         if (existing) {
@@ -33,6 +22,7 @@ class IItemUseCase {
             await this.itemRepository.updateStock(existing.id, nuevoStock);
             return; // no guardar un nuevo registro
         }
+        item.fechaIngreso = new Date();
         await this.itemRepository.save(item);
     }
     async actualizarStock(id, cantidad) {
@@ -42,9 +32,8 @@ class IItemUseCase {
         const nuevoStock = item.stock + cantidad;
         if (nuevoStock < 0)
             throw new Error("El stock no puede quedar negativo.");
-        await this.itemRepository.updateStock(id, nuevoStock);
-        if (item.stock < 5) {
-            console.warn("El item: " + item.nombre + "se encuentra con stock bajo!");
+        if (!await this.itemRepository.updateStock(id, nuevoStock)) {
+            throw new Error("No se pudo descontar el stock");
         }
     }
     async eliminarItem(id) {

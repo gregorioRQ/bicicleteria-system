@@ -18,4 +18,14 @@ export class VentaController {
             return res.status(500).json({message: "Error al registrar la venta", error: (error as Error).message});
         }
     }
+
+    async eliminarVenta(req: Request, res: Response){
+        try{
+            
+        }catch(e){
+            console.error(e)
+            res.status(500).json({message: "Error al eliminar la venta", error: (e as Error).message});
+            throw e;
+        }
+    }
 }
