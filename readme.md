@@ -54,6 +54,34 @@ docker compose up -d --build
   - DELETE /api/sales/:id     -> eliminar venta  
 
 ### Ejemplos del cuerpo de algunas peticiones
-<p>
-<img src="/docs/assets/r-crear-item.png" alt="crear-item" width="300" height="300"/>
-</p>
+- Items
+  - registrar un ítem
+<img src="/docs/assets/r-crear-item.png" alt="crear-item" width="500" height="400"/>
+
+  - editar un ítem
+
+
+- Servicios
+  - registrar un servicio(reparacion)
+<img src="/docs/assets/r-registrar-servicio-REPARACION.png" alt="crear-item" width="500" height="400"/>
+  - registrar un servicio(chequeo)
+<img src="/docs/assets/r-registrar-servicio-CHEQUEO.png" alt="crear-item" width="500" height="400"/>
+  - editar un servicio(reparacion)
+<img src="/docs/assets/r-editar-servicio.png" alt="crear-item" width="500" height="400"/>
+  - editar un servicio(chequeo)
+<img src="/docs/assets/r-actualizar-servicio.png" alt="crear-item" width="500" height="400"/>
+
+- Ventas
+  - registrar una venta
+  <img src="/docs/assets/r-registrar-venta.png" alt="crear-item" width="500" height="400"/>
+
+## Tecnologías usadas
+- Javascript y TypeScript (lenguaje y tipado)
+- Nodejs (entorno)
+- Express (framework)
+- MySQL (base de datos)
+- Docker (despliegue)
+- Git/Github (flujo de trabajo)
+- Postman (pruebas de peticiones)
+- VSCode (herramienta para el desarrollo)
+- Arquitectura Hexagonal (ports and adapters)
