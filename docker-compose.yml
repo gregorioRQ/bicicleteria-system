@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "${DB_PORT}:3306"
+      - "${DB_PORT_HOST}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./bicicleteria_db.sql:/docker-entrypoint-initdb.d/bicicleteria_db.sql
@@ -18,12 +18,13 @@ services:
     container_name: bicicleteria-system
     restart: always
     ports:
-      - "${APP_PORT}:3000"
+      - "${PORT}:3000"
     env_file:
       - .env
     environment:
       NODE_ENV: production
       DB_HOST: mysql
+      DB_PORT: ${DB_PORT_CONTAINER}
     depends_on:
       - mysql
 

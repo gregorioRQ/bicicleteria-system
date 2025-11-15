@@ -16,7 +16,7 @@ export const pool = mysql.createPool({
   user: getEnvVar('DB_USER'),
   password: getEnvVar('DB_PASS'),
   database: getEnvVar('DB_NAME'),
-  port: Number(getEnvVar('DB_PORT')),
+  port: Number(getEnvVar('DB_PORT_HOST')),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

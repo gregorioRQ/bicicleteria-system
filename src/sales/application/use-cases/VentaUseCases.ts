@@ -4,6 +4,7 @@ import { VentaResponse } from "../../domain/model/VentaResponse";
 import { IMaintenanceServicePort } from "../../domain/ports/IMaintenanceServicePort";
 import { MySQLEmpleadoRepository } from "../../infrastructure/driven-adapters/MySQLEmpleadoRepository";
 import { VentaRequest } from "../../domain/model/VentaRequest";
+import { th } from "zod/v4/locales";
 
 
 
@@ -55,18 +56,46 @@ export class VentaUseCases{
         return vr;
     }
 
-    async getVenta(id: number): Promise<VentaResponse | null>{
-        //usar el serviceCommand aqui para pedir los datos del servicio
-        // al  modulo maintenance
-        return null;
+    async getVentaById(id: number): Promise<VentaResponse>{
+       try{
+        if(!id || id===null || id < 0){
+            throw new Error("El id es inválido.")
+        }
+        const venta =  await this.ventaRepository.findById(id);
+            if(!venta){
+                throw new Error("La venta no existe.");
+            }
+        console.log("Venta encontrada:", venta);
+            const services = await this.maintenanceService.getServicesById(venta.servicios_ids);
+            return new VentaResponse(
+                venta.id!,
+                venta.total,
+                venta.metodo_pago,
+                venta.tipo_venta,
+                venta.cliente_nombre,
+                venta.cliente_dni,
+                services
+            );
+        }catch(err){
+            throw err
+        }
+       
     }
 
-    async eliminarVenta(id: number): Promise<void>{
+    async listarVentas(): Promise<Venta[]>{
+        return await this.ventaRepository.findAll();
+    }
+
+    async eliminarVenta(id: number): Promise<boolean>{
         if(!id || id===null || id < 0){
             throw new Error("El id es inválido.")
         }
         try{
-            await this.ventaRepository.delete(id);
+            if(!await this.ventaRepository.findById(id)){
+                throw new Error("La venta no existe o ya fue eliminada.");
+            }
+
+            return await this.ventaRepository.delete(id);
         }catch(err){
             throw err
         }

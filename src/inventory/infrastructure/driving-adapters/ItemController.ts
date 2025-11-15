@@ -35,6 +35,7 @@ export class ItemController {
       }
       res.status(200).json(item);
     } catch (error) {
+      console.error(error);
       res.status(500).json({ message: "Error al obtener el ítem", error: (error as Error).message });
     }
   }
@@ -93,6 +94,7 @@ export class ItemController {
       await this.itemUseCase.eliminarItem(id);
       res.status(200).json({ message: "Item eliminado correctamente" });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ message: "Error al eliminar el ítem", 
         error: (error as Error).message
        });
@@ -114,7 +116,6 @@ export class ItemController {
       res.status(500).json({message: "Ocurrió un error al actualizar el ítem",
         error: (err as Error).message
       });
-      throw err;
     }
   }
 

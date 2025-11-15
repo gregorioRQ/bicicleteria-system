@@ -6,7 +6,7 @@ import { actualizarStockSchema, crearItemSchema } from "./validation/schemas/cre
 export const createItemRouter = (controller: ItemController): Router => {
     const router = Router();
 
-    router.all("/", controller.getAll.bind(controller));
+    router.get("/all", controller.getAll.bind(controller));
     router.get("/:id", controller.getById.bind(controller));
     router.get("/marca/:marca", controller.getByMarca.bind(controller));
     router.post("/crear", validateSchema(crearItemSchema), controller.create.bind(controller));

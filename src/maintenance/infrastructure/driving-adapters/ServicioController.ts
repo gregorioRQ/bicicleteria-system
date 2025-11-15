@@ -52,7 +52,7 @@ export class ServiceController{
             await this.serviceUseCases.eliminarServicio(id);
             res.status(200).json({message: "Servicio eliminado."});
         }catch(e){
-            console.log(e);
+            console.error(e);
             res.status(500).json({message: "Error al eliminar el servicio"})
         }
     }
@@ -76,6 +76,7 @@ export class ServiceController{
             res.status(200).json(s);
         }catch(e){
             res.status(500).json({message: "Error al obtener el servicio"})
+            console.error(e);
         }
     }
 
@@ -104,6 +105,7 @@ export class ServiceController{
             }
             
         }catch(err){
+            console.error(err);
             res.status(500).json({message: "Error ", error: (err as Error).message})
         }
 

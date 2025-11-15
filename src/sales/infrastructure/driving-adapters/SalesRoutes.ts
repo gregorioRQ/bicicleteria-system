@@ -9,7 +9,12 @@ export const createSalesRouter = (ventaController: VentaController, empleadoCont
     const router = Router();
 
     router.post("/crear", validateSchema(crearVentaSchema), ventaController.crearVenta.bind(ventaController));
-    router.post("/empleados/crear", /*validateSchema(crearEmpleadoSchema),*/ empleadoController.crearEmpleado.bind(empleadoController));
+    router.delete("/eliminar/:id", ventaController.eliminarVenta.bind(ventaController));
+    router.get("/all", ventaController.obtenerVentas.bind(ventaController));
+    router.get("/:id", ventaController.obtenerVentaPorId.bind(ventaController));
+
+
+    router.post("/empleados/crear", validateSchema(crearEmpleadoSchema), empleadoController.crearEmpleado.bind(empleadoController));
 
     return router;
 };

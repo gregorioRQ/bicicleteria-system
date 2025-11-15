@@ -15,17 +15,54 @@ export class VentaController {
             const result = await this.ventaUseCase.registrarVenta(nuevaVenta);
             return res.status(201).json({message: "Venta registrada exitosamente", result});
         } catch (error) {
+            console.error(error);
             return res.status(500).json({message: "Error al registrar la venta", error: (error as Error).message});
         }
     }
 
     async eliminarVenta(req: Request, res: Response){
         try{
-            
+            if(!req.params.id){
+                return res.status(400).json({message: "id es requerido"});
+            }
+            const id = parseInt(req.params.id);
+            const result = await this.ventaUseCase.eliminarVenta(id);
+            if(result){
+                return res.status(200).json({message: "Venta eliminada exitosamente"});
+            } else {
+                return res.status(404).json({message: "Venta no encontrada"});
+            }
         }catch(e){
-            console.error(e)
             res.status(500).json({message: "Error al eliminar la venta", error: (e as Error).message});
-            throw e;
+            console.error(e);
+        }
+    }
+
+    async obtenerVentas(req: Request, res: Response){
+        try{
+            const ventas = await this.ventaUseCase.listarVentas();
+            return res.status(200).json(ventas);
+        }catch(e){
+            res.status(500).json({message: "Error al obtener las ventas", error: (e as Error).message});
+            console.error(e);
+        }
+    }
+
+    async obtenerVentaPorId(req: Request, res: Response){
+        try{
+            if(!req.params.id){
+                return res.status(400).json({message: "id es requerido"});
+            }
+            const id = parseInt(req.params.id);
+            if(Number.isNaN(id) || id < 0 || !id || id === null || id === undefined){
+                return res.status(400).json({message: "id es inválido"});
+            }
+           
+            const venta = await this.ventaUseCase.getVentaById(id);
+            return res.status(200).json(venta);
+        }catch(e){
+            res.status(500).json({message: "Error al obtener la venta"});
+            console.error(e);          
         }
     }
 }

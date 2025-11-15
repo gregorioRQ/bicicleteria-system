@@ -7,15 +7,45 @@ export class MySQLVentaRepository implements VentaRepositoryOutPort{
     update(id: number, venta: Venta): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    findAll(): Promise<Venta[]> {
-        throw new Error("Method not implemented.");
+    async findAll(): Promise<Venta[]> {
+        const [rows]: any = await pool.query("SELECT * FROM ventas;");
+        return rows.map(
+            (r:any) => new Venta(r.id, r.fecha, r.total, r.metodo_pago, r.tipo_venta, r.empleado_id, r.cliente_nombre, r.cliente_telefono, r.cliente_dni, r.servicios_ids)
+        );
     }
     async findById(id: number): Promise<Venta | null> {
        const [rows]: any = await pool.query("SELECT * FROM ventas WHERE id = ?;", [id]);
        if(rows.length === 0) return null;
        const r = rows[0];
-       return new Venta(r.id, r.fecha, r.total, r.metodo_pago, r.tipo_venta, r.empleado_id, r.cliente_nombre, r.cliente_telefono, r.cliente_dni, r.servicios_ids);
+
+        // obtener los servicio_ids relacionados desde ventas_servicios
+       const [serviciosRows]: any = await pool.query(
+        "SELECT servicio_id FROM ventas_servicios WHERE venta_id = ?;", [id]
+       );
+
+       /* construir la lista de servicios_ids retorna un array vacio si no hay servicios relacionados a una venta */
+       const servicios_ids: number[] = Array.isArray(serviciosRows)
+         ? serviciosRows.map((sr: any) => Number(sr.servicio_id))
+         : [];
+
+       // construir y devolver la venta con la lista de servicios
+       const venta = new Venta(
+         r.id,
+         r.fecha,
+         r.total,
+         r.metodo_pago,
+         r.tipo_venta,
+         r.empleado_id,
+         r.cliente_nombre,
+         r.cliente_telefono,
+         r.cliente_dni,
+         servicios_ids
+       );
+
+       return venta;
+
     }
+
     async save(venta: Venta): Promise<Venta | null> {
         const connection = await pool.getConnection();
         try{
@@ -48,8 +78,9 @@ export class MySQLVentaRepository implements VentaRepositoryOutPort{
     }
 
        
-    delete(id: number): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async delete(id: number): Promise<boolean> {
+       const [result]: any = await pool.query("DELETE FROM ventas WHERE id = ?;", [id]);
+       return result.affectedRows > 0; 
     }
 
 }
