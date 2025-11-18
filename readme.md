@@ -18,24 +18,33 @@ Sistema backend para una bicicletería que gestiona inventario, ventas y servici
 1. Clonar el repositorio del proyecto.
 2. Configurar el archivo .env (usar como referencia al archivo .env.example)
 3. Ve a la raíz del proyecto (donde se halla el archivo .env.example)
-4. Ejecutar los siguiente comandos en una terminal:
-(Asegurate de tener docker ejecutandose en la pc)
+4. Abre una línea de comandos y ejecuta los siguiente comandos:
+(Asegúrate de tener docker ejecutándose en la pc)
 
 ````
 docker compose up -d --build
 ````
 5. Si deseas interactuar con la base de datos:
-- Abre MySQL Worckbench ve a Database > Connect to Database..
-- En el menu de configuracion pon el puerto que pusiste en tu .env.
-- Luego pon la contraseña que pusiste en el .env.
+- Abre MySQL Workbench ve a Database > Connect to Database..
+- En el menú de configuracion en el apartado "Port" pon el valor que le pusiste a "DB_PORT_HOST" en tu .env.
+- Luego pon la contraseña que pusiste en el .env. tras presionar "ok".
 
-6. Si cambiaste los puertos corre los siguientes comandos:
+6. Si por algún motivo la primera vez la app no arrancó y tuviste que cambiar los puertos corre los siguientes comandos en la raíz del proyecto para aplicar los cambios:
 ````
 docker compose down
 docker compose up -d --build
 ````
 
 ## Endpoints
+
+### Coleccion en Postman
+Puedes usar el enlace de abajo para acceder con mas detalle a la estructura de las consultas si tienes Postman en tu pc instalado.
+ 
+````
+https://gregorioq2025-5033720.postman.co/workspace/Rafa's-Workspace~e344a1ae-7c7e-4867-8c2d-2589b02a495c/collection/50145663-bc6eff48-8169-49d3-904a-2c50d689d8dc?action=share&source=copy-link&creator=50145663
+````
+
+
 - Items (Inventory)
   - GET /api/items            -> listar ítems
   - GET /api/items/all        -> listar ítems (según rutas)
