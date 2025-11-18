@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
+//configura las variables de entorno
 dotenv.config();
 
 function getEnvVar(key: string): string {
