@@ -15,6 +15,7 @@ describe("Eliminar Empleado Use Case", () => {
             findById: jest.fn(),
             findByDni: jest.fn(),
             delete: jest.fn(),
+            findByTelefono: jest.fn(),
         } as jest.Mocked<EmpleadoRepositoryOutPort>;
         
         empleadoUseCases = new EmpleadoUseCases(empleadoRepository);

@@ -1,3 +1,4 @@
+
 import { Empleado } from "../../domain/model/Empleado";
 import { EmpleadoRepositoryOutPort } from "../../domain/repositories/EmpleadoRepositoryOutPort";
 
@@ -7,20 +8,26 @@ export class EmpleadoUseCases{
     ){}
 
     async crearEmpleado(empleado: Empleado): Promise<void> {
-        if(!empleado){
+        try{
+             if(!empleado){
             throw new Error("Datos del empleado requeridos.")
         }
         
-        const empleadoExistente = await this.empleadoRepository.findByDni(empleado.dni);
-
-        if(empleadoExistente?.dni === empleado.dni){
+        const dniExistente = await this.empleadoRepository.findByDni(empleado.dni);
+        if(dniExistente){
             throw new Error("El DNI ya está registrado.");
         }
-        if(empleadoExistente?.telefono === empleado.telefono){
+
+        const telefonoExistente = await this.empleadoRepository.findByTelefono(empleado.telefono);
+        if(telefonoExistente){
             throw new Error("El teléfono ya está registrado.");
         }
-        console.log("Empleado a crear:", empleado);
+        
         await this.empleadoRepository.save(empleado);
+        }catch(error){
+            throw error
+        }
+       
     }
 
     async obtenerEmpleados(): Promise<Empleado[]> {
@@ -33,10 +40,10 @@ export class EmpleadoUseCases{
 
      async otenerEmpleadoPorDNI(dni: string): Promise<Empleado | null> {
             try{
-                if(!dni || dni.trim() === ""|| dni === "undefined"|| dni === "null"){
+                if(!dni || !dni.trim()){
                     throw new Error("DNI inválido.");
                 }
-                const empleado = await this.empleadoRepository.findByDni(dni);
+                const empleado = await this.empleadoRepository.findByDni(dni.trim());
                 return empleado;
             }catch(error){
                 throw new Error("Error al obtener el empleado por DNI: " + error);

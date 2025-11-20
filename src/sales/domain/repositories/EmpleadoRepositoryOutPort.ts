@@ -6,4 +6,5 @@ export interface EmpleadoRepositoryOutPort {
     save(empleado: Empleado): Promise<void>;
     delete(id: number): Promise<boolean>;
     findByDni(dni: string): Promise<Empleado | null>;
+    findByTelefono(telefono: string): Promise<Empleado | null>;
 }

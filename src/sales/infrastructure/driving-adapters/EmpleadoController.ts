@@ -1,4 +1,4 @@
-import { ca } from "zod/v4/locales";
+
 import { EmpleadoUseCases } from "../../application/use-cases/EmpleadoUseCases";
 import { Empleado } from "../../domain/model/Empleado";
 import type { Request, Response } from "express";
@@ -14,8 +14,7 @@ export class EmpleadoController{
         await this.empleadoUseCase.crearEmpleado(nuevoEmpleado);
         return res.status(201).json({message: "Empleado creado exitosamente"});
         }catch(error){
-            console.error(error);
-            return res.status(500).json({message: "Error al crear el empleado", error});
+            return res.status(500).json({message: "Error al crear el empleado", error: (error as Error).message});
         }
         
     }

@@ -30,5 +30,12 @@ export class MySQLEmpleadoRepository implements EmpleadoRepositoryOutPort {
         const [result]: any = await pool.query("DELETE FROM empleados WHERE id = ?", [id]);
         return result.affectedRows > 0;
     }
+
+    async findByTelefono(telefono: string): Promise<Empleado | null> {
+        const [rows]: any = await pool.query("SELECT * FROM empleados WHERE telefono = ? LIMIT 1", [telefono]);
+        if (!rows || rows.length === 0) return null;
+        const r = rows[0];
+        return new Empleado(r.id, r.nombre, r.dni, r.rol, r.telefono);
+    }
     
 }
