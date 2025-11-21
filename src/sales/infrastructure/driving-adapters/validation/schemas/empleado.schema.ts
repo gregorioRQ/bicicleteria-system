@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const crearEmpleadoSchema = z.object({
-  nombre: z.string("Debe ser una cadena de caracteres").max(15, 'El nombre debe tener menos de 15 caracteres'),
-  dni: z.string("Debe ser una cadena de caracteres").min(1, 'El DNI es requerido').max(20, "Debe tener menos de 20 caracteres").regex(/^\d+$/, 'Solo debe contener números'),
+  nombre: z.string("Debe ser una cadena de caracteres").max(15, 'El nombre debe tener menos de 15 caracteres').min(3, "Requerido"),
+  dni: z.string("Debe ser una cadena de caracteres").max(20, "Debe tener menos de 20 caracteres").regex(/^\d+$/, 'Solo debe contener números').min(8, "Requerido"),
   telefono: z.string("Debe ser una cadena de caracteres").min(8, 'Debe tener al menos 8 dígitos').max(30, "Máximo 30 digitos")
     .regex(/^\d+$/, 'Solo debe contener números'),
   rol: z.enum(["MECANICO","VENDEDOR"], { 

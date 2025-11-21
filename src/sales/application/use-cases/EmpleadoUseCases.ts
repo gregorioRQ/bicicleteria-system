@@ -10,8 +10,12 @@ export class EmpleadoUseCases{
     async crearEmpleado(empleado: Empleado): Promise<void> {
         try{
              if(!empleado){
-            throw new Error("Datos del empleado requeridos.")
-        }
+                throw new Error("Datos del empleado requeridos.")
+            }
+
+            if(!empleado.nombre.trim() || !empleado.dni.trim() || !empleado.rol || !empleado.telefono.trim()){
+                throw new Error("Faltan datos obligatorios del empleado.");
+            }
         
         const dniExistente = await this.empleadoRepository.findByDni(empleado.dni);
         if(dniExistente){
@@ -38,7 +42,7 @@ export class EmpleadoUseCases{
         return this.empleadoRepository.findById(id);
     }
 
-     async otenerEmpleadoPorDNI(dni: string): Promise<Empleado | null> {
+     async obtenerEmpleadoPorDNI(dni: string): Promise<Empleado | null> {
             try{
                 if(!dni || !dni.trim()){
                     throw new Error("DNI inválido.");

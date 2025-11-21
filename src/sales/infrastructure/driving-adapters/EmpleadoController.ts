@@ -53,7 +53,7 @@ export class EmpleadoController{
             if(!dni || dni.trim() === ""|| dni === "undefined"|| dni === "null"){
                 return res.status(400).json({message: "DNI inválido."});
             }
-            const empleado = await this.empleadoUseCase.otenerEmpleadoPorDNI(dni);
+            const empleado = await this.empleadoUseCase.obtenerEmpleadoPorDNI(dni);
             if(empleado){
                 return  res.status(200).json(empleado);
             }else{
@@ -68,6 +68,9 @@ export class EmpleadoController{
     async eliminarEmpleado(req: Request, res: Response){
         try{
             const id = parseInt(req.params.id, 10);
+             if(isNaN(id) || id <= 0){
+                return res.status(400).json({message: "ID inválido."});
+            }
             const eliminado = await this.empleadoUseCase.eliminarEmpleado(id);
             if(eliminado){
                 return res.status(200).json({message: "Empleado eliminado exitosamente"});

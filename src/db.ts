@@ -1,8 +1,9 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-//configura las variables de entorno
-dotenv.config();
+dotenv.config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
+});
 
 function getEnvVar(key: string): string {
   const value = process.env[key];
